@@ -1,8 +1,8 @@
-library(qbdev)
+library(devtools)
 
 check_man(as_pkg('plinker'))
 
-test_pkg('plinker')
-test_pkg('plinker', 'dependencies')
-
+test('plinker')
+test('plinker', 'bed')
+test('plinker', 'sample_data')
 
