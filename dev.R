@@ -8,4 +8,5 @@ test('plinker', 'bim')
 test('plinker', 'fam')
 test('plinker', 'plink')
 test('plinker', 'sample_data')
+test('plinker', 'snp_subset')
 

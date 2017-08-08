@@ -35,6 +35,9 @@ new_bed <- function(bed, bim, fam, fam_df, nb_snps) {
   # create the cache
   obj$cache <- new.env(parent = emptyenv())
 
+  # the snp subset
+  obj$snp_idx <- NULL
+
   class(obj) <- 'plinker_bed'
 
 
@@ -65,8 +68,12 @@ bed_open <- function(prefix, files = as.list(unprefix_bed(prefix)),
 ### methods
 #' @export
 print.plinker_bed <- function(x, ...) {
-  line <- sprintf('PLINK BED dataset: %i SNPs x %i samples\n',
-    x$nb_snps, nrow(x$fam_df))
+  nb_snps1 <- bed_nb_snps(x, TRUE)
+  nb_snps <- bed_nb_snps(x, FALSE)
+  if (nb_snps != nb_snps1)
+    nb_snps <- sprintf('%i/%i', nb_snps1, nb_snps)
+  line <- sprintf('PLINK BED dataset: %s SNPs x %i samples\n',
+    nb_snps, nrow(x$fam_df))
   cat(line)
 
   loaded <- if (exists('bim_df', envir = x$cache)) 'Loaded' else
@@ -86,14 +93,28 @@ print.plinker_bed <- function(x, ...) {
 ### accessors
 #' get the number of snps in a plink bed dataset
 #'
-#' @param bo	a bed plink datatset object
+#' @inheritParams params
 #' @family accessors
 #' @export
-bed_nb_snps <- function(bo) bo$nb_snps
+bed_nb_snps <- function(bo, subset = TRUE) {
+  if (!subset || is.null(bo$snp_idx)) {
+    bo$nb_snps
+  } else {
+    length(bo$snp_idx)
+  }
+}
+
+#' get the current subset of snps as indices
+#'
+#' @inheritParams params
+#' @return the indices, or NULL if not subset
+#' @family accessors
+#' @export
+bed_snp_idx <- function(bo) bo$snp_idx
 
 #' get the number of samples in a plink bed dataset
 #'
-#' @param bo	a bed plink datatset object
+#' @inheritParams params
 #' @family accessors
 #' @export
 bed_nb_samples <- function(bo) nrow(bo$fam_df)
@@ -101,7 +122,7 @@ bed_nb_samples <- function(bo) nrow(bo$fam_df)
 
 #' get fam sample annotations
 #'
-#' @param bo	a bed plink datatset object
+#' @inheritParams params
 #' @return the annotations as a data frame
 #' @family accessors
 #' @export
@@ -113,18 +134,21 @@ bed_fam_df <- function(bo) bo$fam_df
 #' The first time this function is called, it will actually read the file,
 #' but all subsequent calls will use the cached value.
 #'
-#' @param bo	a bed plink datatset object
+#' @inheritParams params
 #' @return the annotations as a data frame
 #' @family accessors
 #' @export
-bed_bim_df <- function(bo) {
+bed_bim_df <- function(bo, subset = TRUE) {
   bim_df <- get0('bim_df', envir = bo$cache, inherits = FALSE)
   if (is.null(bim_df)) {
     bim_df <- read_bim(bo$bim)
     assign('bim_df', bim_df, envir = bo$cache)
   }
 
-  bim_df
+  if (!subset || is.null(bo$snp_idx))
+    bim_df
+  else
+    bim_df[bo$snp_idx, , drop = FALSE]
 }
 
 

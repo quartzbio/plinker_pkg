@@ -39,6 +39,7 @@ test_that('new_bed', .new_bed())
 
   expect_equal(bed_nb_samples(bo), 89)
   expect_equal(bed_nb_snps(bo), 17)
+  expect_null(bed_snp_idx(bo))
   expect_identical(bed_fam_df(bo), read_fam(bo$fam))
   expect_identical(bed_bim_df(bo), read_bim(bo$bim))
 }

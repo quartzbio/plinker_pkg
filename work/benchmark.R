@@ -34,7 +34,4 @@ system.time(bim_df <- bed_bim_df(bo))
 #   2.599   0.074   2.678
 
 
-
-
-
 system.time(bo <- bed_open('1kg_phase1_all'))
