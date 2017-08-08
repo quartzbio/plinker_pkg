@@ -1,6 +1,10 @@
 #hidden files
 .*
 
+*.bed
+*.bim
+*.fam
+
 # temp files
 *~
 *.o
