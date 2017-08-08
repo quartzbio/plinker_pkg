@@ -14,7 +14,7 @@ context('SNP subset')
 
   expect_equal(bed_nb_snps(bo2), 3)
   expect_equal(bed_nb_snps(bo2, subset = FALSE), 17)
-  expect_identical(bo2$snp_idx, c(3L, 5L, 16L))
+  expect_identical(bed_snp_idx(bo2), c(3L, 5L, 16L))
 
   df <- bed_bim_df(bo2)
   expect_equal(rownames(df), as.character(c(3L, 5L, 16L)))
@@ -24,11 +24,11 @@ context('SNP subset')
   bo3 <- bed_subset_snps_by_idx(bo2, c(3, 1, 3))
   expect_equal(bed_nb_snps(bo3), 2)
   expect_equal(bed_nb_snps(bo3, subset = FALSE), 17)
-  expect_identical(bo3$snp_idx, c(3L, 16L))
+  expect_identical(bed_snp_idx(bo3), c(3L, 16L))
 
   bo4 <-  bed_subset_snps_by_idx(bo3, 2)
   expect_equal(bed_nb_snps(bo4), 1)
-  expect_identical(bo4$snp_idx, 16L)
+  expect_identical(bed_snp_idx(bo4), 16L)
 }
 test_that('bed_subset_snps_by_idx', .bed_subset_snps_by_idx())
 

@@ -9,4 +9,4 @@ test('plinker', 'fam')
 test('plinker', 'plink')
 test('plinker', 'sample_data')
 test('plinker', 'snp_subset')
-
+test('plinker', 'sample_subset')

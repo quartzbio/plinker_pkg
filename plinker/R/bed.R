@@ -35,8 +35,10 @@ new_bed <- function(bed, bim, fam, fam_df, nb_snps) {
   # create the cache
   obj$cache <- new.env(parent = emptyenv())
 
-  # the snp subset
-  obj$snp_idx <- NULL
+#  # the snp subset
+#  obj$snp_idx <- NULL
+#  # the sample subset
+#  obj$sample_idx <- NULL
 
   class(obj) <- 'plinker_bed'
 
@@ -72,8 +74,13 @@ print.plinker_bed <- function(x, ...) {
   nb_snps <- bed_nb_snps(x, FALSE)
   if (nb_snps != nb_snps1)
     nb_snps <- sprintf('%i/%i', nb_snps1, nb_snps)
-  line <- sprintf('PLINK BED dataset: %s SNPs x %i samples\n',
-    nb_snps, nrow(x$fam_df))
+
+  nbs1 <- bed_nb_samples(x, TRUE)
+  nbs <- bed_nb_samples(x, FALSE)
+  if (nbs != nbs1)
+    nbs <- sprintf('%i/%i', nbs1, nbs)
+
+  line <- sprintf('PLINK BED dataset: %s SNPs x %s samples\n', nb_snps, nbs)
   cat(line)
 
   loaded <- if (exists('bim_df', envir = x$cache)) 'Loaded' else
@@ -112,12 +119,26 @@ bed_nb_snps <- function(bo, subset = TRUE) {
 #' @export
 bed_snp_idx <- function(bo) bo$snp_idx
 
+#' get the current subset of samples as indices
+#'
+#' @inheritParams params
+#' @return the indices, or NULL if not subset
+#' @family accessors
+#' @export
+bed_sample_idx <- function(bo) bo$sample_idx
+
 #' get the number of samples in a plink bed dataset
 #'
 #' @inheritParams params
 #' @family accessors
 #' @export
-bed_nb_samples <- function(bo) nrow(bo$fam_df)
+bed_nb_samples <- function(bo, subset = TRUE) {
+  if (!subset || is.null(bo$sample_idx)) {
+    nrow(bo$fam_df)
+  } else {
+    length(bo$sample_idx)
+  }
+}
 
 
 #' get fam sample annotations
@@ -126,7 +147,12 @@ bed_nb_samples <- function(bo) nrow(bo$fam_df)
 #' @return the annotations as a data frame
 #' @family accessors
 #' @export
-bed_fam_df <- function(bo) bo$fam_df
+bed_fam_df <- function(bo, subset = TRUE) {
+  if (!subset || is.null(bo$sample_idx))
+    bo$fam_df
+  else
+    bo$fam_df[bo$sample_idx, , drop = FALSE]
+}
 
 #' get/fetch bim snp annotations lazyly
 #'
