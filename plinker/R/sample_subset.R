@@ -26,7 +26,7 @@ bed_subset_samples_by_idx <- function(bo, sample_idx) {
 }
 
 
-#' cancel any subset of SNPs in a plink dataset
+#' cancel any subset of samples in a plink dataset
 #'
 #' @inheritParams params
 #' @return the unsubset bed dataset object
