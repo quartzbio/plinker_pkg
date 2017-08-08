@@ -23,6 +23,22 @@ plink_cmd <- function(args, command = Sys.which('plink'),
   res
 }
 
+
+#' run a plink command on a plinker_bed object
+#'
+#' @param ...		passed to \code{\link{plink_cmd}}
+#' @inheritParams params
+#' @export
+bed_plink_cmd <- function(bo,
+  snp_idx = bed_snp_idx(bo),
+  sample_idx = bed_sample_idx(bo),
+  ...)
+{
+
+
+}
+
+
 #' get plink version
 #'
 #' @param ...		passed to \code{\link{plink_cmd}}
