@@ -27,7 +27,6 @@ new_bed <- function(bed, bim, fam) {
 }
 
 
-
 unprefix_bed <- function(prefix) {
   types <- c('bed', 'bim', 'fam')
   fns <- paste0(prefix, '.', types)
