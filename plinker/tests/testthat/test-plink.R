@@ -1,6 +1,24 @@
 context('plink')
 
 
+.bed_plink_freq_count <- function() {
+  bo <- bed_open(plinker:::fetch_sample_bed())
+
+  bim_df <- bed_bim_df(bo)
+
+  df <- bed_plink_freq_count(bo, quiet = TRUE)
+  expect_identical(df$SNP, bim_df$SNPID)
+  expect_identical(df$A1, bim_df$A1)
+  expect_identical(df$A2, bim_df$A2)
+
+  bo2 <- bed_subset_snps_by_idx(bo, 6:10)
+  df2 <- bed_plink_freq_count(bo2, quiet = TRUE)
+  expect_equivalent(df2, df[6:10, ])
+}
+test_that('bed_plink_freq_count', .bed_plink_freq_count())
+
+
+
 .bed_plink_cmd <- function() {
   plink_cmd <- plinker:::plink_cmd
 

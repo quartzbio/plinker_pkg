@@ -25,31 +25,9 @@ get_error_msg <- function(x) {
   conditionMessage(get_error(x))
 }
 
+setup_temp_dir <- plinker:::setup_temp_dir
 
 
-# setup a temp dir
-setup_temp_dir <- function() {
-  caller <- as.character(sys.call(-1))[1]
 
-  dir <- tempfile(caller)
-  dir.create(dir, recursive = TRUE)
 
-  old <- setwd(dir)
-  # just to avoid warnings when tested via qbdev
-  writeLines('', '.qbdev')
-
-  cleanup <- bquote({
-      setwd(.(old))
-      unlink(.(dir), recursive = TRUE)
-    })
-  env <- parent.frame()
-
-  do.call(add_on_exit, list(cleanup, env))
-
-  invisible(dir)
-}
-
-add_on_exit <- function(expr, where = parent.frame()) {
-  do.call("on.exit", list(substitute(expr), add = TRUE), envir = where)
-}
 

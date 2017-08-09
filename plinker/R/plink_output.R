@@ -10,5 +10,10 @@ read_plink_output <- function(path, ...) {
 }
 
 read_plink_freq <- function(path) {
-  read_plink_output(path, col_types = 'icccni')
+  read_plink_output(path, col_types = 'ccccni')
 }
+
+read_plink_freq_counts <- function(path) {
+  read_plink_output(path, col_types = 'cccciii')
+}
+

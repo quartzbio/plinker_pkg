@@ -1,6 +1,6 @@
 library(devtools)
 
-check_man(as_pkg('plinker'))
+check_man('plinker')
 
 test('plinker')
 test('plinker', 'bed')

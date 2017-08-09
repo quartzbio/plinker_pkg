@@ -70,7 +70,18 @@ bed_plink_cmd <- function(bo,
 }
 
 
-
+#' run plink --freq counts
+#'
+#' @param ...		passed to \code{\link{bed_plink_cmd}}
+#' @inheritParams bed_plink_cmd
+#' @return a data frame, cf \url{http://www.cog-genomics.org/plink/1.9/formats#frq_count}
+#'
+#' @export
+bed_plink_freq_count <- function(bo, ...) {
+  setup_temp_dir()
+  bed_plink_cmd(bo, '--freq counts', ...)
+  read_plink_freq_counts('plink.frq.counts')
+}
 
 #' get plink version
 #'
