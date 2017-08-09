@@ -16,6 +16,9 @@ dim(df)
 system.time(df <- read_fam('1kg_phase1_all.fam'))
 
 system.time(df <- read_bim('1kg_phase1_all.bim'))
+#    user  system elapsed
+#  70.496   1.331  71.949
+
 # user  system elapsed
 # 174.905   1.463 176.706
 
@@ -30,7 +33,8 @@ df <- as.data.frame(readr::read_delim(path, '\t',
 )
 #    user  system elapsed
 # 105.671   0.286 106.046
-
+#user  system elapsed
+#70.496   1.331  71.949
 
 # test with skip
 system.time(
@@ -46,10 +50,68 @@ system.time(
 
 
 
+### using data.table::fread: SNPIDS
+path <- '1kg_phase1_all.bim'
+system.time(
+df <- data.table::fread(path, sep = '\t', header = FALSE, verbose = FALSE,
+  select = 2, quote = '', strip.white = FALSE, data.table = FALSE,
+  colClasses = rep('character', 6))
+)
+
+#  15.572   0.647  16.246
+
+#    user  system elapsed
+#  15.641   0.415  16.078
+
+path <- '1kg_phase1_chr1.bim'
+system.time(
+  df <- data.table::fread(path, sep = '\t', header = FALSE, verbose = FALSE,
+      select = 2, quote = '', strip.white = FALSE, data.table = FALSE,
+      colClasses = rep('character', 6))
+)
+#    user  system elapsed
+#   1.139   0.032   1.173
+
+
+
+### using data.table::fread: all
+path <- '1kg_phase1_all.bim'
+system.time(
+  df <- data.table::fread(path, sep = '\t', header = FALSE, verbose = FALSE,
+      quote = '', strip.white = FALSE, data.table = FALSE)
+)
+
+#    user  system elapsed
+#  23.254   0.692  23.977
+
+#  33.410   0.973  34.460
+
 
 system.time(df <- read_bim('1kg_phase1_chr1.bim'))
 #    user  system elapsed
 #   9.256   0.110   9.380
+
+system.time(lines <- readLines('1kg_phase1_chr1.bim'))
+#    user  system elapsed
+#   8.901   0.000   8.849
+
+system.time(lines <- data.table::fread('1kg_phase1_chr1.bim'))
+#    user  system elapsed
+#   1.622   0.032   1.656
+
+
+
+readLines('1kg_phase1_chr1.bim', 2)
+# [1] "1\trs58108140\t0\t10583\tA\tG"  "1\trs189107123\t0\t10611\tG\tC"
+con <- file('1kg_phase1_chr1.bim')
+readLines(con, 1)
+# [1] "1\trs58108140\t0\t10583\tA\tG"
+readLines(con, 1)
+# [1] "1\trs58108140\t0\t10583\tA\tG"
+
+readLines
+
+
 
 
 system.time(bo <- bed_open('1kg_phase1_chr1'))
@@ -73,13 +135,22 @@ bed_nb_snps(bo)
 # worst case
 idx <- seq.int(1, 39728178, by = 2)
 
-
 system.time(blks <- plinker:::split_sorted_ints_by_blocks(idx))
 #    user  system elapsed
-#   2.381   0.347   2.731
-nrow(blks)
-# [1] 19864089
-nrow(blks)/length(idx)
+#   1.607   0.304   1.915
+
+length(idx)/nrow(blks)
 # [1] 1
+
+
+# best case
+idx <- c(1:100000, 1e7, 3e7:39728178)
+system.time(blks <- plinker:::split_sorted_ints_by_blocks(idx))
+#    user  system elapsed
+#   0.356   0.049   0.406
+
+length(idx)/nrow(blks)
+# [1] 1
+
 
 

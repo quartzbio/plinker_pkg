@@ -7,8 +7,10 @@ Description: a R interface for Plink BED files.
 Imports:
 Depends:
 Suggests:
+	data.table,
 	readr,
 	roxygen2,
+	utils,
 	testthat
 License: GPL-3
 Copyright: Quartz Bio SA, Bat. F2/F3, Avenue de Secheron 15, CH-1202 Geneva,

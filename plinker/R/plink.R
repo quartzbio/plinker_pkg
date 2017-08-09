@@ -28,15 +28,48 @@ plink_cmd <- function(args, command = Sys.which('plink'),
 #'
 #' @param ...		passed to \code{\link{plink_cmd}}
 #' @inheritParams params
+#' @inheritParams plink_cmd
+#' @param stderr	cf \code{\link{system2}}
 #' @export
 bed_plink_cmd <- function(bo,
+  args,
   snp_idx = bed_snp_idx(bo),
   sample_idx = bed_sample_idx(bo),
+  quiet = FALSE,
+  stdout = quiet,
+  stderr = quiet,
   ...)
 {
+  ### add plink input files
+  fns <- bo[c('bed', 'fam', 'bim')]
+  fargs <- paste0('--', names(fns), ' ', fns)
+  args <- c(fargs, args)
 
+  ### add subsetting args if needed
+  plink_snp_ids_fn <- 'input_snp_ids.txt'
+  if (!is.null(snp_idx)) {
+    bim_df <- bed_bim_df(bo, subset = FALSE)
+    snp_ids <- bim_df$SNPID[snp_idx]
 
+    writeLines(snp_ids, plink_snp_ids_fn)
+
+    args <- c(paste('--extract', plink_snp_ids_fn), args)
+  }
+
+  plink_sample_ids_fn <- 'input_sample_ids.txt'
+  if (!is.null(sample_idx)) {
+    fam_df <- bed_fam_df(bo, subset = FALSE)
+    sample_ids <- fam_df$FID[sample_idx]
+
+    writeLines(sample_ids, plink_sample_ids_fn)
+
+    args <- c(paste('--keep-fam', plink_sample_ids_fn), args)
+  }
+
+  invisible(plink_cmd(args, stdout = stdout, stderr = stderr, ...))
 }
+
+
 
 
 #' get plink version

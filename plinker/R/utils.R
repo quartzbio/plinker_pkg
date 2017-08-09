@@ -5,6 +5,7 @@
 #' @return a 2 column
 #' @keywords internal
 split_sorted_ints_by_blocks <- function(ints) {
+  ints <- as.integer(ints)
   nb <- length(ints)
   if (nb == 0) return(NULL)
 
