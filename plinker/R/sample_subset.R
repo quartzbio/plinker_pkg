@@ -1,7 +1,7 @@
 #' select a subset of samples in a plink dataset
 #'
 #' @inheritParams params
-#' @return the subset bed dataset object
+#' @return the subsetted bed dataset object
 #' @family accessors
 #' @export
 bed_subset_samples_by_idx <- function(bo, sample_idx) {
@@ -29,7 +29,7 @@ bed_subset_samples_by_idx <- function(bo, sample_idx) {
 #' cancel any subset of samples in a plink dataset
 #'
 #' @inheritParams params
-#' @return the unsubset bed dataset object
+#' @return the subsetted bed dataset object
 #' @family accessors
 #' @export
 bed_reset_subset_samples_by_idx <- function(bo) {

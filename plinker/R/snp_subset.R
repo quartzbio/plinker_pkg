@@ -3,7 +3,7 @@
 #' N.B: the order of SNPs will not be preserved.
 #'
 #' @inheritParams params
-#' @return the subset bed dataset object
+#' @return the subsetted bed dataset object
 #' @family accessors
 #' @export
 bed_subset_snps_by_idx <- function(bo, snp_idx) {
@@ -30,7 +30,7 @@ bed_subset_snps_by_idx <- function(bo, snp_idx) {
 #' select a subset of SNPs in a plink dataset
 #'
 #' @inheritParams params
-#' @return the subset bed dataset object
+#' @return the subsetted bed dataset object
 #' @family accessors
 #' @export
 bed_subset_snps_by_IDs <- function(bo, snp_IDs) {
@@ -51,7 +51,7 @@ bed_subset_snps_by_IDs <- function(bo, snp_IDs) {
 #' cancel any subset of SNPs in a plink dataset
 #'
 #' @inheritParams params
-#' @return the unsubset bed dataset object
+#' @return the unsubsetted bed dataset object
 #' @family accessors
 #' @export
 bed_reset_subset_snps_by_idx <- function(bo) {
