@@ -25,10 +25,10 @@ context('bim')
 
   expect_equal(dim(df), c(17, 6))
   expect_identical(names(df),
-    c('CHR', 'SNPID', 'MORGANS', 'POS', 'A1', 'A2'))
+    c('CHR', 'SNP', 'MORGANS', 'POS', 'A1', 'A2'))
 
   expect_identical(unique(df$CHR), "8")
-  expect_equal(anyDuplicated(df$SNPID), 0)
+  expect_equal(anyDuplicated(df$SNP), 0)
 
   expect_equal(anyDuplicated(df$POS), 0)
 

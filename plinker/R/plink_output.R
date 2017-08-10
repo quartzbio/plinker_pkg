@@ -11,12 +11,16 @@ read_plink_output <- function(path, ...) {
 #  )
 #
 #  df
-  data.table::fread(path,
+  df <- data.table::fread(path,
     verbose = FALSE,
     data.table = FALSE,
     showProgress = FALSE,
     ...
   )
+
+  if (!is.null(df$CHR)) df$CHR <- as.character(df$CHR)
+
+  df
 }
 
 read_plink_freq <- function(path) {

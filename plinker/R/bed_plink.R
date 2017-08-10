@@ -62,7 +62,7 @@ bed_plink_cmd <- function(bo,
   plink_snp_ids_fn <- 'input_snp_ids.txt'
   if (!is.null(snp_idx)) {
     bim_df <- bed_bim_df(bo, subset = FALSE)
-    snp_ids <- bim_df$SNPID[snp_idx]
+    snp_ids <- bim_df$SNP[snp_idx]
 
     writeLines(snp_ids, plink_snp_ids_fn)
 
@@ -115,6 +115,28 @@ bed_plink_freqx <- function(bo, ...)
   args <- '--freqx'
   bed_plink_cmd(bo, args, ...)
   read_plink_output('plink.frqx')
+}
+
+#' compute snp and sample missing rates using plink --missing
+#'
+#' @param ...		passed to \code{\link{bed_plink_cmd}}
+#' @inheritParams bed_plink_cmd
+#' @return a list of 2 data frame,
+#' 	cf \url{http://www.cog-genomics.org/plink/1.9/formats#imiss} and
+#' 	\url{http://www.cog-genomics.org/plink/1.9/formats#lmiss}
+#'
+#' @seealso bed_plink_cmd
+#' @export
+bed_plink_missing <- function(bo, ...)
+{
+  setup_temp_dir()
+
+  args <- '--missing'
+  bed_plink_cmd(bo, args, ...)
+  imiss <- read_plink_output('plink.imiss')
+  lmiss <- read_plink_output('plink.lmiss')
+
+  list(sample = imiss, snp = lmiss)
 }
 
 

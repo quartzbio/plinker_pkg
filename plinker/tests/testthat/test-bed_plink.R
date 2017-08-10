@@ -1,6 +1,31 @@
 context('plink')
 
 
+.bed_plink_missing <- function() {
+  bo <- bed_open(plinker:::fetch_sample_bed())
+  fam <- bed_fam_df(bo)
+  bim <- bed_bim_df(bo)
+
+  res <- bed_plink_missing(bo, quiet = TRUE)
+
+  imiss <- res$sample
+  expect_identical(imiss[, 1:2], fam[, 1:2])
+  expect_equal(unique(imiss$N_GENO), 17)
+  expect_equal(max(imiss$N_MISS), 1)
+  expect_equal(max(imiss$F_MISS), 1/17, tolerance = 1e-5)
+
+  lmiss <- res$snp
+
+  expect_identical(lmiss[, 1:2], bim[, 1:2])
+  gfreqs <- bed_plink_freqx(bo, quiet = TRUE)
+  expect_equal(gfreqs[[10]], lmiss$N_MISS)
+  expect_equal(gfreqs[[10]] / 89, lmiss$F_MISS, tolerance = 1e-5)
+}
+test_that('bed_plink_missing', .bed_plink_missing())
+
+
+
+
 .bed_plink_freqx <- function() {
   bo <- bed_open(plinker:::fetch_sample_bed())
 
@@ -12,7 +37,7 @@ context('plink')
   nb <- unique(rowSums(df[, 5:10]))
   expect_equal(nb, bed_nb_samples(bo))
 
-  expect_identical(df$SNP, bim_df$SNPID)
+  expect_identical(df$SNP, bim_df$SNP)
   expect_identical(df$A1, bim_df$A1)
   expect_identical(df$A2, bim_df$A2)
 
@@ -44,7 +69,7 @@ test_that('bed_plink_freqx', .bed_plink_freqx())
   nb <- unique(with(df, C1 + C2 + 2*G0)) / 2
   expect_equal(nb, bed_nb_samples(bo))
 
-  expect_identical(df$SNP, bim_df$SNPID)
+  expect_identical(df$SNP, bim_df$SNP)
   expect_identical(df$A1, bim_df$A1)
   expect_identical(df$A2, bim_df$A2)
 
@@ -96,14 +121,14 @@ test_that('bed_plink_freq_count', .bed_plink_freq_count())
   bed_plink_cmd(bo, snp_idx = 6:10, '--freq', quiet = TRUE)
   df2 <- read_plink_freq('plink.frq')
   bim_df <- bed_bim_df(bo, subset = FALSE)
-  expect_identical(df2$SNP, bim_df[6:10, 'SNPID'])
+  expect_identical(df2$SNP, bim_df[6:10, 'SNP'])
 
   idx <- c(2, 10:16)
   bo2 <- bed_subset_snps_by_idx(bo, idx)
 
   bed_plink_cmd(bo2, '--freq', quiet = TRUE)
   df2 <- read_plink_freq('plink.frq')
-  expect_identical(df2$SNP, bim_df[idx, 'SNPID'])
+  expect_identical(df2$SNP, bim_df[idx, 'SNP'])
 
   ### sample subset
   sample_idx <- c(3, 11:20, 50:80)
@@ -123,7 +148,7 @@ test_that('bed_plink_freq_count', .bed_plink_freq_count())
   bed_plink_cmd(bo3, '--freq', quiet = TRUE)
   df4 <- read_plink_freq('plink.frq')
 
-  expect_identical(df4$SNP, bim_df[idx, 'SNPID'])
+  expect_identical(df4$SNP, bim_df[idx, 'SNP'])
   expect_equal(max(df4$NCHROBS), length(sample_idx) * 2)
 }
 test_that('bed_plink_cmd', .bed_plink_cmd())

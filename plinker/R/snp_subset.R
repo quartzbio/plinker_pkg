@@ -37,7 +37,7 @@ bed_subset_snps_by_IDs <- function(bo, snp_IDs) {
   bim_df <- bed_bim_df(bo, subset = TRUE)
 
   snp_IDs <- unique(snp_IDs)
-  idx <- match(snp_IDs, bim_df$SNPID)
+  idx <- match(snp_IDs, bim_df$SNP)
   bads <- which(is.na(idx))
   if (length(bads) > 0) {
     bad_ids <- snp_IDs[bads]

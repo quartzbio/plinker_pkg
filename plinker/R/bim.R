@@ -13,13 +13,13 @@ read_bim <- function(path) {
     quote = '',
     strip.white = FALSE,
     data.table = FALSE,
-    col.names = c('CHR', 'SNPID', 'MORGANS', 'POS', 'A1', 'A2'),
+    col.names = c('CHR', 'SNP', 'MORGANS', 'POS', 'A1', 'A2'),
     colClasses = c('character','character', 'numeric',
       'integer', 'character', 'character'),
     showProgress = FALSE
   )
 #  as.data.frame(readr::read_delim(path, '\t',
-#      col_names = c('CHR', 'SNPID', 'MORGANS', 'POS', 'A1', 'A2'),
+#      col_names = c('CHR', 'SNP', 'MORGANS', 'POS', 'A1', 'A2'),
 #      col_types = 'ccnicc',
 #      progress = FALSE
 #   ))
@@ -40,8 +40,8 @@ read_bim <- function(path) {
 #
 #  .read_block <- function(skip, nmax) {
 #    read_delim(con, '\t',
-#      col_names = c('CHR', 'SNPID', 'MORGANS', 'POS', 'A1', 'A2'),
-#      col_types = readr::cols_only(SNPID = 'c'),
+#      col_names = c('CHR', 'SNP', 'MORGANS', 'POS', 'A1', 'A2'),
+#      col_types = readr::cols_only(SNP = 'c'),
 #      progress = FALSE,
 #      skip = skip,
 #      guess_max = 0,
