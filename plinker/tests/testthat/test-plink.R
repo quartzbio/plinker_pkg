@@ -6,14 +6,39 @@ context('plink')
 
   bim_df <- bed_bim_df(bo)
 
+  ### no subset
   df <- bed_plink_freq_count(bo, quiet = TRUE)
+
+  nb <- unique(with(df, C1 + C2 + 2*G0)) / 2
+  expect_equal(nb, bed_nb_samples(bo))
+
   expect_identical(df$SNP, bim_df$SNPID)
   expect_identical(df$A1, bim_df$A1)
   expect_identical(df$A2, bim_df$A2)
 
+  # sample filtering
+  df2 <- bed_plink_freq_count(bo, allow_no_sex = FALSE, quiet = TRUE)
+  # only ignore phenotype for no sex, does not impact the freqs
+  expect_identical(df2, df)
+
+  df2 <- bed_plink_freq_count(bo, nonfounders = FALSE, quiet = TRUE)
+  nb <- unique(with(df2, C1 + C2 + 2*G0)) / 2
+  nb_nonfounders <- bed_nb_samples(bo) - nb
+  expect_equal(nb_nonfounders, 3)
+
+  ## !! 3 non founders, although only 2 actual ones since on hasa parent not
+  ## in the fam file
+
+  #### subset by snps
   bo2 <- bed_subset_snps_by_idx(bo, 6:10)
   df2 <- bed_plink_freq_count(bo2, quiet = TRUE)
   expect_equivalent(df2, df[6:10, ])
+
+  ### subset by samples
+  bo2 <- bed_subset_samples_by_idx(bo, 21:60)
+  df2 <- bed_plink_freq_count(bo2, quiet = TRUE)
+  nb <- unique(with(df2, C1 + C2 + 2*G0)) / 2
+  expect_equal(nb, 40)
 }
 test_that('bed_plink_freq_count', .bed_plink_freq_count())
 

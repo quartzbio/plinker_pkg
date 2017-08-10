@@ -152,5 +152,44 @@ system.time(blks <- plinker:::split_sorted_ints_by_blocks(idx))
 length(idx)/nrow(blks)
 # [1] 1
 
+#####################################################
+
+system.time(bo <- bed_open('1kg_phase1_chr1'))
+bo2 <- bed_subset_snps_by_idx(bo, 1001:2000)
+system.time(counts <- bed_plink_freq_count(bo2))
+#    user  system elapsed
+#   1.014   0.164   1.161
+
+system.time(counts <- bed_plink_freq_count(bo))
+#    user  system elapsed
+#  28.739   0.625  20.183
+
+bads <- with(counts, which(C1 > C2))
+head(counts[bads, ])
+#    CHR         SNP A1 A2   C1  C2 G0
+# 7    1 rs140337953  T  G 1570 596  0
+# 18   1 rs150021059  G  T 1929 237  0
+# 25   1   rs3091274  A  C 1941 225  0
+# 40   1 rs189727433  C  A 1887 279  0
+# 44   1  rs74970982  G  A 2067  99  0
+# 67   1  rs75062661  G  A 1414 752  0
+
+bim_df <- bed_bim_df(bo, subset = FALSE)
+head(bim_df[bads, ])
+#    CHR       SNPID MORGANS   POS A1 A2
+# 7    1 rs140337953       0 30923  T  G
+# 18   1 rs150021059       0 52238  G  T
+# 25   1   rs3091274       0 55164  A  C
+# 40   1 rs189727433       0 57952  C  A
+# 44   1  rs74970982       0 61442  G  A
+# 67   1  rs75062661       0 69511  G  A
+
+library(dplyr)
+nb <- unique(with(counts, C1 + C2 + 2*G0) / 2)
+nb
+# [1] 1092
+
+bed_nb_samples(bo)
+# [1] 1092
 
 
