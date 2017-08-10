@@ -1,0 +1,22 @@
+# latest qbrocker image
+image: $CI_REGISTRY/registry/qb:qbdev_latest
+
+# enable the use of gitmodules or first level. N.B: the url must be relative
+variables:
+  GIT_SUBMODULE_STRATEGY: normal
+  ENTRYPOINT_DEBUG: "1"
+
+test:
+  script:
+     # force crayon  mode
+     - echo "options(crayon.enabled=TRUE)" > .Rprofile
+     - make check
+
+     
+
+    
+    
+    
+    
+
+
