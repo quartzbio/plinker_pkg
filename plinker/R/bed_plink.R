@@ -83,7 +83,7 @@ bed_plink_cmd <- function(bo,
 }
 
 
-#' run plink --freq counts
+#' compute allele frequencies using plink --freq counts
 #'
 #' @param ...		passed to \code{\link{bed_plink_cmd}}
 #' @inheritParams bed_plink_cmd
@@ -99,6 +99,24 @@ bed_plink_freq_count <- function(bo, ...)
   bed_plink_cmd(bo, args, ...)
   read_plink_freq_counts('plink.frq.counts')
 }
+
+#' compute genotype frequencies using plink --freqx
+#'
+#' @param ...		passed to \code{\link{bed_plink_cmd}}
+#' @inheritParams bed_plink_cmd
+#' @return a data frame, cf \url{http://www.cog-genomics.org/plink/1.9/formats#frqx}
+#'
+#' @seealso bed_plink_cmd
+#' @export
+bed_plink_freqx <- function(bo, ...)
+{
+  setup_temp_dir()
+
+  args <- '--freqx'
+  bed_plink_cmd(bo, args, ...)
+  read_plink_output('plink.frqx')
+}
+
 
 #' get plink version
 #'

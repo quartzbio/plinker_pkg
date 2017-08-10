@@ -1,6 +1,38 @@
 context('plink')
 
 
+.bed_plink_freqx <- function() {
+  bo <- bed_open(plinker:::fetch_sample_bed())
+
+  bim_df <- bed_bim_df(bo)
+
+  ### no subset
+  df <- bed_plink_freqx(bo, quiet = TRUE)
+
+  nb <- unique(rowSums(df[, 5:10]))
+  expect_equal(nb, bed_nb_samples(bo))
+
+  expect_identical(df$SNP, bim_df$SNPID)
+  expect_identical(df$A1, bim_df$A1)
+  expect_identical(df$A2, bim_df$A2)
+
+  # sample filtering
+  df2 <- bed_plink_freqx(bo, allow_no_sex = FALSE, quiet = TRUE)
+  # only ignore phenotype for no sex, does not impact the freqs
+  expect_identical(df2, df)
+
+  df2 <- bed_plink_freqx(bo, nonfounders = FALSE, quiet = TRUE)
+  nb <- unique(rowSums(df2[, 5:10]))
+  nb_nonfounders <- bed_nb_samples(bo) - nb
+  expect_equal(nb_nonfounders, 3)
+
+  ## !! 3 non founders, although only 2 actual ones since on hasa parent not
+  ## in the fam file
+}
+test_that('bed_plink_freqx', .bed_plink_freqx())
+
+
+
 .bed_plink_freq_count <- function() {
   bo <- bed_open(plinker:::fetch_sample_bed())
 
