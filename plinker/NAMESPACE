@@ -3,6 +3,7 @@
 S3method(print,plinker_bed)
 export(bed_bim_df)
 export(bed_fam_df)
+export(bed_filter_snps_by_missing_rate)
 export(bed_nb_samples)
 export(bed_nb_snps)
 export(bed_open)
