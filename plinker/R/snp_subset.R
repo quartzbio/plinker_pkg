@@ -4,7 +4,7 @@
 #'
 #' @inheritParams params
 #' @return the subsetted bed dataset object
-#' @family accessors
+#' @family subset
 #' @export
 bed_subset_snps_by_idx <- function(bo, snp_idx) {
   if (length(snp_idx) == 0) stop('empty snp_idx')
@@ -31,7 +31,7 @@ bed_subset_snps_by_idx <- function(bo, snp_idx) {
 #'
 #' @inheritParams params
 #' @return the subsetted bed dataset object
-#' @family accessors
+#' @family subset
 #' @export
 bed_subset_snps_by_IDs <- function(bo, snp_IDs) {
   bim_df <- bed_bim_df(bo, subset = TRUE)
@@ -52,7 +52,7 @@ bed_subset_snps_by_IDs <- function(bo, snp_IDs) {
 #'
 #' @inheritParams params
 #' @return the unsubsetted bed dataset object
-#' @family accessors
+#' @family subset
 #' @export
 bed_reset_subset_snps_by_idx <- function(bo) {
   bo$snp_idx <- NULL

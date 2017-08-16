@@ -1,6 +1,76 @@
 library(devtools)
 load_all('plinker')
 
+
+###############################
+# BEDMatrix
+############################
+system.time(bo <- bed_open('1kg_phase1_chr1'))
+library(BEDMatrix)
+bmat <- BEDMatrix(bo$bed, n = bed_nb_samples(bo, subset = FALSE),
+  p = bed_nb_snps(bo, subset = FALSE))
+
+bmat
+# BEDMatrix: 1092 x 3007196 [/home/docker/workspace/plinker_pkg/1kg_phase1_chr1.bed]
+str(bmat)
+# BEDMatrix: 1092 x 3007196 [/home/docker/workspace/plinker_pkg/1kg_phase1_chr1.bed]
+
+dim(bmat)
+# [1]    1092 3007196
+length(bmat)
+# [1] 3283858032
+dimnames(bmat)
+# [[1]]
+# NULL
+#
+# [[2]]
+# NULL
+dimnames(bmat)
+
+bmat[1:3, 1:5]
+#      [,1] [,2] [,3] [,4] [,5]
+# [1,]    0    0    0    0    0
+# [2,]    0    1    1    1    1
+# [3,]    0    0    0    0    0
+
+bmat[c(2, 3), 1:5]
+#      [,1] [,2] [,3] [,4] [,5]
+# [1,]    0    1    1    1    1
+# [2,]    0    0    0    0    0
+bmat[c(3, 2), 1:5]
+#      [,1] [,2] [,3] [,4] [,5]
+# [1,]    0    0    0    0    0
+# [2,]    0    1    1    1    1
+
+bmat[1, 1:5]
+# [1] 0 0 0 0 0
+bmat[1, 1:5, drop = FALSE]
+#      [,1] [,2] [,3] [,4] [,5]
+# [1,]    0    0    0    0    0
+
+
+path <- system.file("extdata", "example.bed", package = "BEDMatrix")
+m <- BEDMatrix(path)
+
+
+m[1:3, c("snp0_A", "snp1_C", "snp2_G")]
+#           snp0_A snp1_C snp2_G
+# per0_per0      0      1      1
+# per1_per1      1      1      1
+# per2_per2      1      0      0
+
+m[1:3, c("snp0_", "snp1_C", "snp2_G")]
+# Error in convertIndex(x, j, "j") : subscript out of bounds
+
+
+
+# p
+
+2L - bmat[1:3, 1:5]
+
+
+
+
 # toto.fam has ~ 100000 lines/samples
 
 system.time(df <- read_fam('toto.fam'))
@@ -156,6 +226,11 @@ length(idx)/nrow(blks)
 
 system.time(bo <- bed_open('1kg_phase1_chr1'))
 bo2 <- bed_subset_snps_by_idx(bo, 1001:2000)
+
+
+bof <- bed_filter_snps_by_missing_rate(bo, 0.000001)
+
+
 system.time(counts <- bed_plink_freq_count(bo2))
 #    user  system elapsed
 #   1.014   0.164   1.161
@@ -191,5 +266,7 @@ nb
 
 bed_nb_samples(bo)
 # [1] 1092
+
+
 
 

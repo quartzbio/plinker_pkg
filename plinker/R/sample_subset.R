@@ -2,7 +2,7 @@
 #'
 #' @inheritParams params
 #' @return the subsetted bed dataset object
-#' @family accessors
+#' @family subset
 #' @export
 bed_subset_samples_by_idx <- function(bo, sample_idx) {
   if (length(sample_idx) == 0) stop('empty sample_idx')
@@ -26,11 +26,32 @@ bed_subset_samples_by_idx <- function(bo, sample_idx) {
 }
 
 
+#' select a subset of samples in a plink dataset
+#'
+#' @inheritParams params
+#' @return the subsetted bed dataset object
+#' @family subset
+#' @export
+bed_subset_samples_by_IDs <- function(bo, sample_IDs) {
+  current_ids <- bed_sample_IDs(bo, subset = TRUE)
+
+  idx <- match(sample_IDs, current_ids)
+  bads <- which(is.na(idx))
+  if (length(bads) > 0) {
+    bad_ids <- sample_IDs[bads]
+    stop(sprintf('Error, bad sample IDs: "%s"', paste0(bad_ids, collapse = ',')))
+  }
+
+  bed_subset_samples_by_idx(bo, idx)
+}
+
+
+
 #' cancel any subset of samples in a plink dataset
 #'
 #' @inheritParams params
 #' @return the subsetted bed dataset object
-#' @family accessors
+#' @family subset
 #' @export
 bed_reset_subset_samples_by_idx <- function(bo) {
   bo$sample_idx <- NULL
@@ -38,3 +59,25 @@ bed_reset_subset_samples_by_idx <- function(bo) {
   bo
 }
 
+#' convert sample ids to sample indices
+#'
+#' N.B: keep the ordering
+#'
+#' @inheritParams params
+#' @return indices
+#' @keywords internal
+bed_sample_IDs_to_idx <- function(bo, sample_IDs, subset = TRUE,
+  ignore_fid = bed_ignore_fid(bo))
+{
+  all_ids <- bed_sample_IDs(bo, subset = subset, ignore_fid = ignore_fid)
+  idx <- match(sample_IDs, all_ids)
+
+  bads <- which(is.na(idx))
+  if (length(bads) > 0) {
+    bad_ids <- sample_IDs[bads]
+    stop(sprintf('Error, bad sample IDs: "%s"', paste0(bad_ids, collapse = ',')))
+  }
+
+
+  idx
+}
