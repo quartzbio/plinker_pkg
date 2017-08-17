@@ -135,6 +135,16 @@ bed_nb_snps <- function(bo, subset = TRUE) {
 #' @export
 bed_snp_idx <- function(bo) bo$snp_idx
 
+#' get the current subset of snps as indices
+#'
+#' @inheritParams params
+#' @return the indices, or NULL if not subset
+#' @family accessors
+#' @export
+bed_snp_IDs <- function(bo, subset = TRUE) {
+  bed_bim_df(bo, subset)$SNP
+}
+
 #' get the current subset of samples as indices
 #'
 #' @inheritParams params

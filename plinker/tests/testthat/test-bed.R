@@ -45,6 +45,8 @@ test_that('new_bed', .new_bed())
   expect_identical(bed_fam_df(bo), read_fam(bo$fam))
   expect_identical(bed_bim_df(bo), read_bim(bo$bim))
 
+  expect_identical(bed_snp_IDs(bo), bed_bim_df(bo)$SNP)
+
   expect_false(bed_ignore_fid(bo))
 
 }

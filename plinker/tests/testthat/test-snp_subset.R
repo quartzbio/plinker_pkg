@@ -21,6 +21,7 @@ context('SNP subset')
   expect_equal(bed_nb_snps(bo2, subset = FALSE), 17)
   idx2 <- as.integer(sort(unique(idx)))
   expect_identical(bed_snp_idx(bo2), idx2)
+  expect_identical(sort(bed_snp_IDs(bo2)), sort(unique(ids)))
 
   df <- bed_bim_df(bo2)
   expect_equal(rownames(df), as.character(idx2))
@@ -33,10 +34,14 @@ context('SNP subset')
   expect_equal(bed_nb_snps(bo3), length(ids2))
   expect_equal(bed_nb_snps(bo3, subset = FALSE), 17)
   expect_identical(sort(bim_df$SNP[bed_snp_idx(bo3)]), sort(ids2))
+  expect_identical(sort(bed_snp_IDs(bo3)), sort(unique(ids2)))
 
   bo4 <-  bed_subset_snps_by_IDs(bo3, "rs10105623")
   expect_equal(bed_nb_snps(bo4), 1)
   expect_identical(bim_df$SNP[bed_snp_idx(bo4)], "rs10105623")
+  expect_identical(bed_snp_IDs(bo4), "rs10105623")
+
+  expect_identical(bed_snp_IDs(bo4, subset = FALSE), bim_df$SNP)
 }
 test_that('bed_subset_snps_by_IDs', .bed_subset_snps_by_IDs())
 
