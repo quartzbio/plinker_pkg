@@ -153,6 +153,26 @@ bed_snp_IDs <- function(bo, subset = TRUE) {
 #' @export
 bed_sample_idx <- function(bo) bo$sample_idx
 
+#' get the first allele
+#'
+#' @inheritParams params
+#' @return the first alleles as a character vector
+#' @family accessors
+#' @export
+bed_allele1 <- function(bo, subset = TRUE) {
+  bed_bim_df(bo, subset)$A1
+}
+
+#' get the second allele
+#'
+#' @inheritParams params
+#' @return the second alleles as a character vector
+#' @family accessors
+#' @export
+bed_allele2 <- function(bo, subset = TRUE) {
+  bed_bim_df(bo, subset)$A2
+}
+
 #' get the current subset of samples as ids
 #'
 #' @inheritParams params

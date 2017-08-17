@@ -13,6 +13,25 @@ context('plink')
   df <- read_plink_ped(ped)
   expect_equal(nrow(df), bed_nb_samples(bo))
   expect_equal(ncol(df), bed_nb_snps(bo)*2 + 6)
+
+  ##########
+
+  bo2 <- bed_subset(bo, snp_idx = 5:10, sample_idx = 31:40)
+
+  bed_plink_ped(bo2, path, keep_allele_order = TRUE, quiet = TRUE)
+  df1 <- read_plink_ped(ped)
+
+  bed_plink_ped(bo2, path, keep_allele_order = FALSE, quiet = TRUE)
+  df2 <- read_plink_ped(ped)
+
+  strs1 <- plinker:::extract_genotypes_from_ped(df1)
+  strs2 <- plinker:::extract_genotypes_from_ped(df2)
+
+  expect_identical( strs1[3, 4], "G/A")
+  expect_identical( strs2[3, 4], "A/G")
+
+  mat <- bed_genotypes_as_strings(bo2, sort = FALSE)
+  expect_identical(mat[3, 4], "G/A")
 }
 test_that('bed_plink_ped', .bed_plink_ped())
 

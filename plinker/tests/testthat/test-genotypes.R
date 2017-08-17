@@ -50,16 +50,25 @@ test_that('make_genotype_converters', .make_genotype_converters())
   setup_temp_dir()
   bed_plink_ped(bo, 'foo', quiet = TRUE)
   ped <- read_plink_ped('foo.ped')
-  mat <- as.matrix(ped[, -(1:6)])
-  # paste all pairs of columns
-
-  .paste_pair <- function(i) {
-    paste0(mat[, i], '/', mat[, i + 1])
-  }
-  strs2 <- sapply(seq.int(start = 1, length.out = ncol(mat)/2, by = 2), .paste_pair)
-  strs2[strs2 == '0/0'] <- NA
+  strs2 <- plinker:::extract_genotypes_from_ped(ped)
 
   expect_equivalent(strs, strs2)
 }
 test_that('convert_genotypes_to_string', .convert_genotypes_to_string())
 
+
+
+.bed_genotypes_as_strings <- function() {
+  bo <- bed_open(plinker:::fetch_sample_bed())
+
+  bo2 <- bed_subset(bo, snp_idx = 5:10, sample_idx = 31:40)
+  strs <- bed_genotypes_as_strings(bo2, sort = FALSE)
+
+  setup_temp_dir()
+  bed_plink_ped(bo2, 'foo', quiet = TRUE)
+  ped <- read_plink_ped('foo.ped')
+  strs2 <- plinker:::extract_genotypes_from_ped(ped)
+
+  expect_equivalent(strs, strs2)
+}
+test_that('bed_genotypes_as_strings', .bed_genotypes_as_strings())

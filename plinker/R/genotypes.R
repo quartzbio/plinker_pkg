@@ -1,3 +1,28 @@
+#' get genotypes as a matrix of strings
+#'
+#'
+#' @inheritParams params
+#' @inheritParams convert_genotypes_to_string
+#' @param subset	whether to consider subset info from the bo object.
+#' 	if FALSE, no other params must be given
+#' @param ... 		passed to [bed_subset]
+#' @return the genotypes as an integer matrix of samples X snps,
+#' @export
+#' @md
+bed_genotypes_as_strings <- function(bo, subset = TRUE,
+  allele1 = bed_allele1(bo, subset),
+  allele2 = bed_allele2(bo, subset),
+  sep = '/',
+  sort = TRUE,
+  ...)
+{
+  mat <- bed_genotypes(bo, subset = subset, ...)
+  strs <- convert_genotypes_to_string(mat, allele1, allele2, sep = sep,
+    sort = sort)
+
+  strs
+}
+
 
 #' convert a genotype matrix of raw genotypes to strings
 #'
@@ -79,3 +104,18 @@ make_genotype_converters <- function(allele1, allele2, sep = '/', sort = TRUE) {
 
   res
 }
+
+extract_genotypes_from_ped <- function(ped_df, sep = '/') {
+  mat <- as.matrix(ped_df[, -(1:6)])
+  # paste all pairs of columns
+
+  .paste_pair <- function(i) {
+    paste0(mat[, i], '/', mat[, i + 1])
+  }
+  strs2 <- sapply(seq.int(start = 1, length.out = ncol(mat)/2, by = 2),
+    .paste_pair)
+  strs2[strs2 == '0/0'] <- NA
+
+  strs2
+}
+

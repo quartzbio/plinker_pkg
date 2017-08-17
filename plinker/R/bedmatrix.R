@@ -26,7 +26,7 @@ bed_init_bedmatrix <- function(bo) {
   mat
 }
 
-#' get genotypes as a matrix
+#' get genotypes as an integer matrix
 #'
 #' The genotypes are coded as in plink **.raw** files:
 #'   - 0 indicates A2A2
@@ -67,6 +67,5 @@ bed_genotypes <- function(bo, subset = TRUE, ...) {
     bmat[sample_idx, snp_idx, drop = FALSE]
   }
 }
-
 
 

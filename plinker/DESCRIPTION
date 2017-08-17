@@ -4,8 +4,6 @@ Version: 0.1
 Author: QB <all@quartzbio.com>
 Maintainer: <all@quartzbio.com>
 Description: a R interface for Plink BED files.
-Imports:
-Depends:
 Suggests:
 		BEDMatrix,
     data.table,

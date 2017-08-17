@@ -145,13 +145,16 @@ bed_plink_missing <- function(bo, ...)
 #' N.B: will also generate other files (.log, .map, .nosex)
 #'
 #' @param output_prefix	path of the .ped file to generate  (without the .ped suffix)
+#' @param keep_allele_order		whether to tell plink not to reorder alleles based
+#' 	on maf for instance
 #' @param ...		passed to \code{\link{bed_plink_cmd}}
 #' @inheritParams bed_plink_cmd
 #' @seealso bed_plink_cmd
 #' @export
-bed_plink_ped <- function(bo, output_prefix, ...)
+bed_plink_ped <- function(bo, output_prefix, keep_allele_order = TRUE, ...)
 {
   args <- c('--recode', paste0('--out ', output_prefix))
+  if (keep_allele_order) args <- c(args, '--keep-allele-order')
   bed_plink_cmd(bo, args, ...)
 }
 
