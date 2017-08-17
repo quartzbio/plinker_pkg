@@ -1,6 +1,23 @@
 context('plink')
 
 
+.bed_plink_ped <- function() {
+  setup_temp_dir()
+  bo <- bed_open(plinker:::fetch_sample_bed())
+
+  path <- 'toto'
+  bed_plink_ped(bo, path, quiet = TRUE)
+  ped <- paste0(path, '.ped')
+  expect_true(file.exists(ped))
+
+  df <- read_plink_ped(ped)
+  expect_equal(nrow(df), bed_nb_samples(bo))
+  expect_equal(ncol(df), bed_nb_snps(bo)*2 + 6)
+}
+test_that('bed_plink_ped', .bed_plink_ped())
+
+
+
 .bed_plink_missing <- function() {
   bo <- bed_open(plinker:::fetch_sample_bed())
   fam <- bed_fam_df(bo)

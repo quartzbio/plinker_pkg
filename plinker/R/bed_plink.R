@@ -140,6 +140,22 @@ bed_plink_missing <- function(bo, ...)
 }
 
 
+#' output a ped file
+#'
+#' N.B: will also generate other files (.log, .map, .nosex)
+#'
+#' @param output_prefix	path of the .ped file to generate  (without the .ped suffix)
+#' @param ...		passed to \code{\link{bed_plink_cmd}}
+#' @inheritParams bed_plink_cmd
+#' @seealso bed_plink_cmd
+#' @export
+bed_plink_ped <- function(bo, output_prefix, ...)
+{
+  args <- c('--recode', paste0('--out ', output_prefix))
+  bed_plink_cmd(bo, args, ...)
+}
+
+
 #' get plink version
 #'
 #' @param ...		passed to \code{\link{plink_cmd}}

@@ -67,3 +67,6 @@ bed_genotypes <- function(bo, subset = TRUE, ...) {
     bmat[sample_idx, snp_idx, drop = FALSE]
   }
 }
+
+
+

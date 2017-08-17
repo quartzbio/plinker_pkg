@@ -1,3 +1,21 @@
+#' read a plink ped file
+#'
+#' @param path	the path of the ped file
+#' @inheritParams params
+#' @return the parsed ped as a data frame
+#' @family read
+#' @export
+read_plink_ped <- function(path) {
+  df <- read_plink_output(path)
+  nsnps <- (ncol(df) - 6) / 2
+
+  snp_cols <- rep(paste0('SNP', seq_len(nsnps)), each = 2)
+  snp_cols <- paste0(snp_cols, c('A1', 'A2'))
+
+  names(df) <- c('FID', 'IID', 'FATHER_ID', 'MOTHER_ID', 'SEX', 'PHENO', snp_cols)
+
+  df
+}
 
 read_plink_output <- function(path, ...) {
 #  df <- read.table(path, header = TRUE, stringsAsFactors = FALSE)
