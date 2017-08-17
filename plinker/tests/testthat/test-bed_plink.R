@@ -139,6 +139,7 @@ test_that('bed_plink_freq_count', .bed_plink_freq_count())
 
 .bed_plink_cmd <- function() {
   plink_cmd <- plinker:::plink_cmd
+  read_plink_freq <- plinker:::read_plink_freq
 
   bo <- bed_open(plinker:::fetch_sample_bed())
 
