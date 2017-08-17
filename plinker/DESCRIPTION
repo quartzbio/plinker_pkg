@@ -1,12 +1,13 @@
 Package: plinker
 Title: a R interface for Plink BED files
-Version: 0.4
+Version: 0.1
 Author: QB <all@quartzbio.com>
 Maintainer: <all@quartzbio.com>
 Description: a R interface for Plink BED files.
 Imports:
 Depends:
 Suggests:
+		BEDMatrix,
     data.table,
     readr,
     roxygen2,
@@ -15,4 +16,4 @@ Suggests:
 License: GPL-3
 Copyright: Quartz Bio SA, Bat. F2/F3, Avenue de Secheron 15, CH-1202 Geneva,
     Switzerland.
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
