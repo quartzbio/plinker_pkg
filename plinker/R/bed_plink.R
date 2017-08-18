@@ -119,13 +119,16 @@ bed_plink_freq_count <- function(bo, ...)
 #'
 #' N.B: use min_r2 to limit output !!!!
 #'
+#' Currently the implementation does not seem parallelized.
+#'
+#' This does not depend on keep_allele_order.
+#'
 #' @inheritDotParams bed_plink_cmd -bo -args
 #' @inheritParams params
 #' @param window_size		max number of SNPs in LD window
 #' @param window_length	max window length in kb
 #' @param min_r2				minimum r2 value to report. Very important for performance
 #'                      and to avoid filling up your hard-disk.
-#' @param threads       cf this param in ...
 #' @return a data frame with columns: CHR_A BP_A SNP_A CHR_B BP_B SNP_B R2 DP,
 #' 	cf <https://www.cog-genomics.org/plink/1.9/ld>
 #' @export
@@ -135,7 +138,6 @@ bed_plink_ld <- function(
   window_size = 10L,
   window_length = 1000000L,
   min_r2 = 0,
-  threads = NA,
   ...
 ) {
 
@@ -146,7 +148,7 @@ bed_plink_ld <- function(
   args <- paste(main_args, window_args, sep = ' ')
 
   dir <- setup_temp_dir()
-  bed_plink_cmd(bo, args, threads = threads, ...)
+  bed_plink_cmd(bo, args, ...)
   ld <- read_plink_output('plink.ld')
 
   ld

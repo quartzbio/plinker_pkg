@@ -5,16 +5,13 @@ context('plink')
   bo <- bed_open(plinker:::fetch_sample_bed())
   nsnp <- bed_nb_snps(bo)
   browser()
-  ld1 <- bed_plink_ld(bo, window_size = 2, threads = 1, quiet = TRUE)
+  ld1 <- bed_plink_ld(bo, window_size = 2, quiet = TRUE)
   expect_equal(nrow(ld1), nsnp - 1L)
   expect_true(all(ld1$R2 >= 0 & ld1$R2 <=1))
   expect_true(all(ld1$DP >= 0 & ld1$DP <=1))
 
-  ld2 <- bed_plink_ld(bo, window_size = 2, threads = 1, keep_allele_order = TRUE,
+  ld2 <- bed_plink_ld(bo, window_size = 2,  keep_allele_order = TRUE,
     quiet = TRUE)
-  expect_identical(ld2, ld1)
-
-  ld2 <- bed_plink_ld(bo, window_size = 2, threads = 4, quiet = TRUE)
   expect_identical(ld2, ld1)
 
   ld <- bed_plink_ld(bo, window_size = 3, quiet = TRUE)
