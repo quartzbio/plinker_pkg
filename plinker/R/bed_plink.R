@@ -34,6 +34,10 @@ plink_cmd <- function(args, command = Sys.which('plink'),
 #' 		this behaviour by using the \code{--nonfounders} option, cf
 #' 		\url{http://www.cog-genomics.org/plink/1.9/filter#nonfounders}
 #'
+#' @param keep_allele_order		whether to tell plink not to reorder alleles based
+#' 								on maf for instance. if TRUE adds the --keep-allele-order
+#' 								otherwise does nothing
+#'
 #' @param ...		passed to \code{\link{plink_cmd}}
 #' @inheritParams params
 #' @inheritParams plink_cmd
@@ -45,6 +49,7 @@ bed_plink_cmd <- function(bo,
   sample_idx = bed_sample_idx(bo),
   allow_no_sex = TRUE,
   nonfounders = TRUE,
+  keep_allele_order = FALSE,
   quiet = FALSE,
   stdout = if (quiet) FALSE else "",
   stderr = if (quiet) FALSE else "",
@@ -58,6 +63,8 @@ bed_plink_cmd <- function(bo,
   ## add optional flags
   if (allow_no_sex) args <- c(args, '--allow-no-sex')
   if (nonfounders) args <- c(args, '--nonfounders')
+  if (keep_allele_order) args <- c(args, '--keep-allele-order')
+
   ### add subsetting args if needed
   plink_snp_ids_fn <- 'input_snp_ids.txt'
   if (!is.null(snp_idx)) {
@@ -85,6 +92,8 @@ bed_plink_cmd <- function(bo,
 
 #' compute allele frequencies using plink --freq counts
 #'
+#' N.B: plink --freq does NOT reorder the alleles.
+#'
 #' @param ...		passed to \code{\link{bed_plink_cmd}}
 #' @inheritParams bed_plink_cmd
 #' @return a data frame, cf \url{http://www.cog-genomics.org/plink/1.9/formats#frq_count}
@@ -102,18 +111,21 @@ bed_plink_freq_count <- function(bo, ...)
 
 #' compute genotype frequencies using plink --freqx
 #'
-#' @param ...		passed to \code{\link{bed_plink_cmd}}
-#' @inheritParams bed_plink_cmd
-#' @return a data frame, cf \url{http://www.cog-genomics.org/plink/1.9/formats#frqx}
+#' @inheritDotParams bed_plink_cmd -bo -args
+#' @inheritParams params
+#' @param keep_allele_order cf the ... param
+#'
+#' @return a data frame, cf <http://www.cog-genomics.org/plink/1.9/formats#frqx>
 #'
 #' @seealso bed_plink_cmd
 #' @export
-bed_plink_freqx <- function(bo, ...)
+#' @md
+bed_plink_freqx <- function(bo, keep_allele_order = TRUE, ...)
 {
   setup_temp_dir()
 
   args <- '--freqx'
-  bed_plink_cmd(bo, args, ...)
+  bed_plink_cmd(bo, args, keep_allele_order = keep_allele_order, ...)
   read_plink_output('plink.frqx')
 }
 
@@ -122,11 +134,12 @@ bed_plink_freqx <- function(bo, ...)
 #' @param ...		passed to \code{\link{bed_plink_cmd}}
 #' @inheritParams bed_plink_cmd
 #' @return a list of 2 data frame,
-#' 	cf \url{http://www.cog-genomics.org/plink/1.9/formats#imiss} and
-#' 	\url{http://www.cog-genomics.org/plink/1.9/formats#lmiss}
+#' 	cf [http://www.cog-genomics.org/plink/1.9/formats#imiss](imiss) and
+#' 	[http://www.cog-genomics.org/plink/1.9/formats#lmiss](lmiss)
 #'
 #' @seealso bed_plink_cmd
 #' @export
+#' @md
 bed_plink_missing <- function(bo, ...)
 {
   setup_temp_dir()
@@ -144,18 +157,17 @@ bed_plink_missing <- function(bo, ...)
 #'
 #' N.B: will also generate other files (.log, .map, .nosex)
 #'
+#' @inheritParams bed_plink_cmd
 #' @param output_prefix	path of the .ped file to generate  (without the .ped suffix)
-#' @param keep_allele_order		whether to tell plink not to reorder alleles based
-#' 	on maf for instance
-#' @param ...		passed to \code{\link{bed_plink_cmd}}
+#' @param ...		passed to [bed_plink_cmd()]
 #' @inheritParams bed_plink_cmd
 #' @seealso bed_plink_cmd
 #' @export
+#' @md
 bed_plink_ped <- function(bo, output_prefix, keep_allele_order = TRUE, ...)
 {
   args <- c('--recode', paste0('--out ', output_prefix))
-  if (keep_allele_order) args <- c(args, '--keep-allele-order')
-  bed_plink_cmd(bo, args, ...)
+  bed_plink_cmd(bo, args, keep_allele_order = keep_allele_order, ...)
 }
 
 
