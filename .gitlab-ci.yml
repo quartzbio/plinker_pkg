@@ -1,5 +1,5 @@
 # latest qbrocker image
-image: $CI_REGISTRY/registry/qb:qbdev_latest
+image: $CI_REGISTRY/registry/qb:latest
 
 variables:
   ENTRYPOINT_DEBUG: "0"
