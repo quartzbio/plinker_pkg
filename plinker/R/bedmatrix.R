@@ -1,8 +1,3 @@
-# TODO: Add comment
-#
-# Author: docker
-###############################################################################
-
 
 #' init bedmatrix if needed
 #'

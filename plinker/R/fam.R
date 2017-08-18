@@ -20,7 +20,7 @@ read_fam <- function(path) {
 
 #' compute the sample IDs
 #'
-#' @inheritParams params
+#' @param fam_df	the .fam data frame
 #' @param ignore_fid	if TRUE the ids are the fam IID, otherwise it is
 #' 	a concatenation of the fam FID and IID, separated by underscore
 #' @return the ids
@@ -58,7 +58,7 @@ compute_sample_IDs <- function(fam_df, ignore_fid) {
 #' @param id_var			the df variable to use for the merge if (FID,IID) is not present
 #' 										in df
 #' @param ignore_fid	whether to ignore the .fam FID variable to compute the fam IDs
-#' 										(cf [compute_sample_ids()])
+#' 										(cf [compute_sample_IDs()])
 #' @return the merged data frame
 #' @export
 merge_df_with_fam <- function(fam_df, df, id_var = 'IID', ignore_fid = FALSE) {

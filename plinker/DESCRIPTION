@@ -14,4 +14,5 @@ Suggests:
 License: GPL-3
 Copyright: Quartz Bio SA, Bat. F2/F3, Avenue de Secheron 15, CH-1202 Geneva,
     Switzerland.
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.0.1

@@ -11,14 +11,11 @@
 #' cf <https://www.cog-genomics.org/plink/1.9/input#pheno>
 #'
 #' @inheritParams params
-#' @param variable								the variable to consider
+#' @param phenotype								the variable to consider
 #' @param missing_phenotype 			integer value for replacing NA values in
 #' 	the variable
 #' @export
-#' @family phenotype
-#' @md
-bed_phenotype_from_vector <- function(bo,
-  phenotype, missing_phenotype = -9L, subset = TRUE)
+make_phenotype_from_vector <- function(phenotype, missing_phenotype = -9L)
 {
   phenotype <- as.integer(phenotype)
   if (!is.integer(missing_phenotype) || length(missing_phenotype) != 1 ||
@@ -33,4 +30,31 @@ bed_phenotype_from_vector <- function(bo,
   phenotype[which(is.na(phenotype))] <- missing_phenotype
 
   phenotype
+}
+
+
+#' make a phenotype vector to use with PLINK from a data frame
+#'
+#' the data frame will be merged using [merge_df_with_fam()]
+#'
+#' @param	df							the data frame to extract the phenotype from
+#' @param	phenotype_var		the name of the df column with the phenotype
+#' @inheritDotParams merge_df_with_fam
+#' @inheritParams params
+#' @inheritParams make_phenotype_from_vector
+#' @export
+#' @seealso make_phenotype_from_vector
+bed_phenotype_from_df <- function(bo,
+  df,
+  phenotype_var,
+  missing_phenotype = -9L,
+  subset = TRUE, ...)
+{
+  if (phenotype_var %in% df) stop('bad param phenotype_var')
+  mdf <- merge_df_with_fam(bed_fam_df(bo, subset), df,
+    ignore_fid = bed_ignore_fid(bo), ...)
+
+  pheno <- make_phenotype_from_vector(mdf[[phenotype_var]], missing_phenotype)
+
+  pheno
 }

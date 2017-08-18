@@ -18,37 +18,5 @@ read_bim <- function(path) {
       'integer', 'character', 'character'),
     showProgress = FALSE
   )
-#  as.data.frame(readr::read_delim(path, '\t',
-#      col_names = c('CHR', 'SNP', 'MORGANS', 'POS', 'A1', 'A2'),
-#      col_types = 'ccnicc',
-#      progress = FALSE
-#   ))
 }
 
-
-#read_bim_snpids_by_block <- function(path, blocks) {
-#
-#  nb <- nrow(blocks)
-#  starts <- blocks[, 1]
-#  widths <- blocks[, 2]
-#  ends <- starts + widths - 1L
-#  skips <- starts - c(0, ends[-nb]) - 1L
-#
-#  con <- file(path, 'rb')
-#  open(con)
-#  read_delim <- readr::read_delim
-#
-#  .read_block <- function(skip, nmax) {
-#    read_delim(con, '\t',
-#      col_names = c('CHR', 'SNP', 'MORGANS', 'POS', 'A1', 'A2'),
-#      col_types = readr::cols_only(SNP = 'c'),
-#      progress = FALSE,
-#      skip = skip,
-#      guess_max = 0,
-#      n_max = nmax)
-#  }
-#
-#  lst <- mapply(.read_block, skips, widths)
-#
-#
-#}
