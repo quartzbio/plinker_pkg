@@ -69,7 +69,7 @@ bed_open <- function(prefix, files = as.list(unprefix_bed(prefix)),
   fam_df <- read_fam(fam)
 
   if (is.na(ignore_fid)) {
-    ignore_fid <- anyDuplicated(fam_df$FID) == 0
+    ignore_fid <- length(unique(fam_df$FID)) == 1
   }
 
   nb_snps <- infer_nb_snps(bed, nrow(fam_df))
