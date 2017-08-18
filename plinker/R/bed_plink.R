@@ -37,6 +37,10 @@ plink_cmd <- function(args, command = Sys.which('plink'),
 #' @param keep_allele_order		whether to tell plink not to reorder alleles based
 #' 								on maf for instance. if TRUE adds the --keep-allele-order
 #' 								otherwise does nothing
+#' @param threads							max number of threads for PLINK to use.
+#' 														N.B: not all algorithms are parallelized. if NA
+#' 														do not use the --threads option. i.e. let PLINK
+#' 														decide, cf <https://www.cog-genomics.org/plink/1.9/other#memory>
 #'
 #' @param ...		passed to \code{\link{plink_cmd}}
 #' @inheritParams params
@@ -50,6 +54,7 @@ bed_plink_cmd <- function(bo,
   allow_no_sex = TRUE,
   nonfounders = TRUE,
   keep_allele_order = FALSE,
+  threads = NA,
   quiet = FALSE,
   stdout = if (quiet) FALSE else "",
   stderr = if (quiet) FALSE else "",
@@ -64,6 +69,7 @@ bed_plink_cmd <- function(bo,
   if (allow_no_sex) args <- c(args, '--allow-no-sex')
   if (nonfounders) args <- c(args, '--nonfounders')
   if (keep_allele_order) args <- c(args, '--keep-allele-order')
+  if (!is.na(threads)) args <- c(args, paste0('--threads ', threads))
 
   ### add subsetting args if needed
   plink_snp_ids_fn <- 'input_snp_ids.txt'
@@ -107,6 +113,43 @@ bed_plink_freq_count <- function(bo, ...)
   args <- '--freq counts'
   bed_plink_cmd(bo, args, ...)
   read_plink_freq_counts('plink.frq.counts')
+}
+
+#' compute LD using plink --r2 dprime
+#'
+#' N.B: use min_r2 to limit output !!!!
+#'
+#' @inheritDotParams bed_plink_cmd -bo -args
+#' @inheritParams params
+#' @param window_size		max number of SNPs in LD window
+#' @param window_length	max window length in kb
+#' @param min_r2				minimum r2 value to report. Very important for performance
+#'                      and to avoid filling up your hard-disk.
+#' @param threads       cf this param in ...
+#' @return a data frame with columns: CHR_A BP_A SNP_A CHR_B BP_B SNP_B R2 DP,
+#' 	cf <https://www.cog-genomics.org/plink/1.9/ld>
+#' @export
+#' @md
+bed_plink_ld <- function(
+  bo,
+  window_size = 10L,
+  window_length = 1000000L,
+  min_r2 = 0,
+  threads = NA,
+  ...
+) {
+
+  main_args <- '--r2 dprime'
+  window_args <- sprintf('--ld-window %i --ld-window-kb %i --ld-window-r2 %s',
+    window_size, window_length, min_r2)
+
+  args <- paste(main_args, window_args, sep = ' ')
+
+  dir <- setup_temp_dir()
+  bed_plink_cmd(bo, args, threads = threads, ...)
+  ld <- read_plink_output('plink.ld')
+
+  ld
 }
 
 #' compute genotype frequencies using plink --freqx

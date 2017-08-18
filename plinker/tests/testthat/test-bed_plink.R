@@ -1,6 +1,45 @@
 context('plink')
 
 
+.bed_plink_ld <- function() {
+  bo <- bed_open(plinker:::fetch_sample_bed())
+  nsnp <- bed_nb_snps(bo)
+  browser()
+  ld1 <- bed_plink_ld(bo, window_size = 2, threads = 1, quiet = TRUE)
+  expect_equal(nrow(ld1), nsnp - 1L)
+  expect_true(all(ld1$R2 >= 0 & ld1$R2 <=1))
+  expect_true(all(ld1$DP >= 0 & ld1$DP <=1))
+
+  ld2 <- bed_plink_ld(bo, window_size = 2, threads = 1, keep_allele_order = TRUE,
+    quiet = TRUE)
+  expect_identical(ld2, ld1)
+
+  ld2 <- bed_plink_ld(bo, window_size = 2, threads = 4, quiet = TRUE)
+  expect_identical(ld2, ld1)
+
+  ld <- bed_plink_ld(bo, window_size = 3, quiet = TRUE)
+  expect_equal(nrow(ld), nsnp * 2 - 3)
+
+  res <- merge(ld1, ld, by = c('SNP_A', 'SNP_B'))
+  expect_equal(res$R2.x, res$R2.y)
+  expect_equal(res$DP.x, res$DP.y)
+
+  ### window size
+  pos <- bed_bim_df(bo)$POS
+
+  expect_gt(max(ld1$BP_B - ld1$BP_A), 40000)
+  ld <- bed_plink_ld(bo, window_size = 1000, window_length = 5, quiet = TRUE)
+  expect_lt(max(ld$BP_B - ld$BP_A), 5001)
+
+  ### min_r2
+  ld <- bed_plink_ld(bo, window_size = 2, min_r2 = 0.5, quiet = TRUE)
+  expect_equal(nrow(ld), sum(ld1$R2 >= 0.5))
+}
+test_that('bed_plink_ld', .bed_plink_ld())
+
+
+
+
 .bed_plink_ped <- function() {
   setup_temp_dir()
   bo <- bed_open(plinker:::fetch_sample_bed())
