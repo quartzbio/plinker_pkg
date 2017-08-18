@@ -1,10 +1,8 @@
 # latest qbrocker image
-image: $CI_REGISTRY/registry/qb:qbdev_latest
+image: $CI_REGISTRY/registry/qb:latest
 
-# enable the use of gitmodules or first level. N.B: the url must be relative
 variables:
-  GIT_SUBMODULE_STRATEGY: normal
-  ENTRYPOINT_DEBUG: "1"
+  ENTRYPOINT_DEBUG: "0"
 
 test:
   script:
