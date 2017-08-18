@@ -176,20 +176,12 @@ bed_allele2 <- function(bo, subset = TRUE) {
 #' get the current subset of samples as ids
 #'
 #' @inheritParams params
-#' @param ignore_fid	if TRUE the ids are the fam IID, otherwise it is
-#' 	a concatenation of the fam FID and IID, separated by underscore
+#' @inheritParams compute_sample_IDs
 #' @return the ids
 #' @family accessors
 #' @export
 bed_sample_IDs <- function(bo, subset = TRUE, ignore_fid = bed_ignore_fid(bo)) {
-  df <- bed_fam_df(bo, subset = subset)
-  ids <- if (ignore_fid) {
-    df$IID
-  } else {
-    paste0(df$FID, '_', df$IID)
-  }
-
-  ids
+  compute_sample_IDs(bed_fam_df(bo, subset = subset), ignore_fid)
 }
 
 
