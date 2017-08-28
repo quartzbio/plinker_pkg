@@ -18,6 +18,22 @@ read_fam <- function(path) {
   df
 }
 
+
+
+#' save a plink .fam file
+#'
+#' cf \url{http://www.cog-genomics.org/plink/1.9/formats#fam}
+#'
+#' @param	df			the fam data frame to save
+#' @param path		the path of the file to save
+#' @param header	whether to write the header
+#' @export
+save_fam <- function(df, path, header = FALSE) {
+  utils::write.table(df,path, sep = ' ', col.names = header, row.names = FALSE,
+    quote = FALSE)
+}
+
+
 #' compute the sample IDs
 #'
 #' @param fam_df	the .fam data frame

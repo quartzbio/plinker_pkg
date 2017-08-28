@@ -18,6 +18,23 @@ test_that('read_fam', .read_fam())
 
 
 
+.save_fam <- function() {
+  bo <- bed_open(plinker:::fetch_sample_bed())
+
+  setup_temp_dir()
+  dir.create('dir')
+  path <- 'dir/toto.fam'
+
+  fam <- bed_fam_df(bo)
+
+  save_fam(fam, path)
+
+  fam2 <- read_fam(path)
+  expect_identical(fam2, fam)
+}
+test_that('save_fam', .save_fam())
+
+
 
 .merge_df_with_fam <- function() {
   bo <- bed_open(plinker:::fetch_sample_bed())

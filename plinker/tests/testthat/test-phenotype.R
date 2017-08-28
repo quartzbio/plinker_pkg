@@ -24,6 +24,7 @@ context('phenotype')
 test_that('bed_phenotype_from_df', .bed_phenotype_from_df())
 
 
+
 .make_phenotype_from_vector <- function() {
   bo <- bed_open(plinker:::fetch_sample_bed())
 
