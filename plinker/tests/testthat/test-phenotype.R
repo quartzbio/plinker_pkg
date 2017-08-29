@@ -15,11 +15,15 @@ context('phenotype')
     stringsAsFactors = FALSE)
 
   df[nb:10, 'VALUE'] <- NA
-  pheno <- bed_phenotype_from_df(bo, df, 'VALUE', id_var = 'SUBJID',
-    missing_phenotype = 0L)
+  pheno <- bed_phenotype_from_df(bo, df, 'VALUE', id_var = 'SUBJID')
 
-  expect_true(all(tail(pheno, 9) != 0))
-  expect_true(all(head(pheno, nb - 10) == 0))
+  expect_error(make_phenotype_from_vector(pheno, missing_phenotype = 0L),
+    'must be negative integer')
+
+  pheno <- make_phenotype_from_vector(pheno, missing_phenotype = -1L)
+
+  expect_true(all(tail(pheno, 9) != -1))
+  expect_true(all(head(pheno, nb - 10) == -1))
 }
 test_that('bed_phenotype_from_df', .bed_phenotype_from_df())
 
@@ -40,11 +44,16 @@ test_that('bed_phenotype_from_df', .bed_phenotype_from_df())
   expect_equal(which(pheno == -9), c(1, 17))
 
   # safety net
-  v[23] <- -9L
-  expect_error(make_phenotype_from_vector(v), 'missing_phenotype')
+  v2 <- v
+  v2[23] <- -9L
 
-  pheno <- make_phenotype_from_vector(v, missing_phenotype = 0L)
-  expect_equal(which(pheno == 0), c(1, 17))
+  expect_error(make_phenotype_from_vector(v2), 'missing_phenotype')
+  # but no error if no NA
+  v2[1] <- v2[17] <- -9L
+  expect_identical(make_phenotype_from_vector(v2), v2)
+
+  pheno <- make_phenotype_from_vector(v, missing_phenotype = -2L)
+  expect_equal(which(pheno == -2), c(1, 17))
 
   expect_error(make_phenotype_from_vector(v, missing_phenotype = 0),
     'bad missing_phenotype')
