@@ -9,6 +9,7 @@ Suggests:
     data.table,
     readr,
     roxygen2,
+    stats,
     utils,
     testthat
 License: GPL-3
