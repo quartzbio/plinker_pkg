@@ -1,5 +1,28 @@
 context('genotypes')
 
+
+.recode_genotypes <- function() {
+  recode_genotypes <- plinker:::recode_genotypes
+  genos <- c(0:2, NA, 2:0, NA)
+
+  expect_identical(recode_genotypes(genos, 'additive'), genos)
+  expect_identical(recode_genotypes(genos, 'additive', TRUE),
+    c(2:0, NA, 0:2, NA))
+
+  expect_identical(recode_genotypes(genos, 'dominant'),
+    c(0L, 1L, 1L, NA, 1L, 1L, 0L, NA))
+  expect_identical(recode_genotypes(genos, 'dominant', TRUE),
+    c(1L, 1L, 0L, NA, 0L, 1L, 1L, NA))
+
+  expect_identical(recode_genotypes(genos, 'recessive'),
+    c(0L, 0L, 1L, NA, 1L, 0L, 0L, NA))
+  expect_identical(recode_genotypes(genos, 'recessive', TRUE),
+    c(1L, 0L, 0L, NA, 0L, 0L, 1L, NA))
+}
+test_that('recode_genotypes', .recode_genotypes())
+
+
+
 .make_genotype_converters <- function() {
   make_genotype_converters <- plinker:::make_genotype_converters
 

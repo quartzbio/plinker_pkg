@@ -26,9 +26,9 @@ bed_genotypes_as_strings <- function(bo, subset = TRUE,
 
 #' convert a genotype matrix of raw genotypes to strings
 #'
-#' The genotypes must be encoded as [bed_genotypes]
+#' The genotypes must be encoded as [bed_genotypes()]
 #'
-#' @param genos	a genotype matrix, as returned by [bed_genotypes]
+#' @param genos	a genotype matrix, as returned by [bed_genotypes()]
 #' @param allele1		the first allele, as a character vector of length the
 #' 		nb of columns of genos
 #' @param allele2		the second allele, as a character vector of length the
@@ -37,7 +37,6 @@ bed_genotypes_as_strings <- function(bo, subset = TRUE,
 #' @param	sort			whether to sort the (heterozygote) strings
 #' @return a character matrix of the same dimension as genos
 #' @export
-#' @md
 convert_genotypes_to_string <- function(genos,
   allele1,
   allele2,
@@ -117,5 +116,46 @@ extract_genotypes_from_ped <- function(ped_df, sep = '/') {
   strs2[strs2 == '0/0'] <- NA
 
   strs2
+}
+
+
+#' recode numeric genotype according to a genetic model
+#'
+#' N.B: in PLINK, the A1 allele is usually the minor allele, but that
+#' is often false. Moreover if you subset your dataset, it may invert the
+#' minor and major allele.
+#'
+#' Here all the models assume that A1 is the risk/trait allele. You can use
+#' the invert param to use A2 instead of A1.
+#'
+#' @param genos 		a numeric vector of genotypes (for one SNP). The values are
+#'	the same as [bed_genotypes()], i.e. A2A2=0, A1A2=1, A1A1=2,NA=missing
+#'
+#' @param model 	the genetic model either:
+#' 		- additive: (A2A2=0, A1A2=1, A1A1=2), i.e the the number of A1 alleles
+#' 				i.e. no change
+#'    - dominant: (A2A2=0, A1A2=1, A1A1=1), i.e presence of A1
+#'    - recessive: (A2A2=0, A1A2=0, A1A1=1), i.e. presence of A1A1
+#'
+#' @param invert	whether to consider A2 as the risk/trait allele
+#'
+#' @return  numeric vector of recoded genotypes
+#'
+#' @family genotypes
+#' @keywords internal
+recode_genotypes <- function(genos,
+  model = c('additive', 'dominant', 'recessive'), invert = FALSE)
+{
+  model <- match.arg(model)
+
+  if (invert)
+    genos <- 2L - genos
+
+  switch(model,
+    additive = genos,
+    dominant = pmin(genos, 1L),
+    recessive = pmax(genos - 1L, 0L),
+    stop("not possible")
+  )
 }
 
