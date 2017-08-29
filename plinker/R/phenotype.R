@@ -40,10 +40,21 @@ check_missing_phenotype <- function(missing_phenotype) {
     stop('bad missing_phenotype: must be negative integer of length 1')
 }
 
-check_case_control_phenotype <- function(phenotype, nb_samples) {
+check_case_control_phenotype <- function(phenotype, nb_samples, missing_phenotype) {
   if (length(phenotype) != nb_samples)
     stop('bad phenotype length')
   if (!is.integer(phenotype)) stop('phenotype must be an integer vector!')
+
+  values <- setdiff(unique(phenotype), missing_phenotype)
+  if (length(values) > 2) stop('phenotype must be binary')
+
+}
+
+
+check_quantitative_phenotype <- function(phenotype, nb_samples) {
+  if (length(phenotype) != nb_samples)
+    stop('bad phenotype length')
+  if (!is.numeric(phenotype)) stop('phenotype must be a numeric vector!')
 }
 
 
