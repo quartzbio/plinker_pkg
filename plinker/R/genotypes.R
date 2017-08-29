@@ -70,8 +70,9 @@ convert_genotypes_to_string <- function(genos,
   }
 
   mat <- sapply(seq_len(nsnps), .convert_col)
+  # special case needed when mat is a scalar
+  dim(mat) <- dim(genos)
   dimnames(mat) <- dimnames(genos)
-
 
   mat
 }
@@ -158,4 +159,8 @@ recode_genotypes <- function(genos,
     stop("not possible")
   )
 }
+
+
+
+
 

@@ -76,6 +76,12 @@ test_that('make_genotype_converters', .make_genotype_converters())
   strs2 <- plinker:::extract_genotypes_from_ped(ped)
 
   expect_equivalent(strs, strs2)
+
+  g1 <- genos[1, 1, drop = FALSE]
+  strs <- convert_genotypes_to_string(g1, 'A', 'T')
+  expect_equal(dim(strs), c(1, 1))
+  expect_equivalent(strs, 'T/T')
+
 }
 test_that('convert_genotypes_to_string', .convert_genotypes_to_string())
 
