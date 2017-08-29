@@ -80,6 +80,12 @@ bed_open <- function(prefix, files = as.list(unprefix_bed(prefix)),
 
 ### methods
 #' @export
+as.data.frame.plinker_bed <- function(x, ...) {
+  bed_convert_genotypes_to_data_frame(x)
+}
+
+
+#' @export
 print.plinker_bed <- function(x, ...) {
   nb_snps1 <- bed_nb_snps(x, TRUE)
   nb_snps <- bed_nb_snps(x, FALSE)

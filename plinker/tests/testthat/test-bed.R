@@ -75,6 +75,17 @@ test_that('print.plinker_bed', .print.plinker_bed())
 
 
 
+.as.data.frame.plinker_bed <- function() {
+  bo <- bed_open(plinker:::fetch_sample_bed())
+
+  bo2 <- bed_subset(bo, snp_idx = 5:13, sample_idx = 24:67)
+  expect_identical(as.data.frame(bo2),
+    plinker:::bed_convert_genotypes_to_data_frame(bo2))
+}
+test_that('as.data.frame.plinker_bed', .as.data.frame.plinker_bed())
+
+
+
 .infer_nb_snps <- function() {
   infer_nb_snps <- plinker:::infer_nb_snps
 
