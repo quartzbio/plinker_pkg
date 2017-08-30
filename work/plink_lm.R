@@ -1,6 +1,11 @@
 library(devtools)
 load_all('plinker')
 
+mk_pheno <- function(bo) {
+  set.seed(123)
+  rnorm(bed_nb_samples(bo))
+}
+
 bo <- bed_open('1kg_phase1_chr1')
 
 miss <- bed_plink_missing(bo)
@@ -11,10 +16,57 @@ non_rare <- which(freqx$`C(HOM A1)` > 100)
 bo2 <- bed_subset(bo, snp_idx = non_rare)
 
 
-mk_pheno <- function(bo) {
-  set.seed(123)
-  rnorm(bed_nb_samples(bo))
-}
+bo1 <- bed_subset(bo, snp_idx= 1:2)
+pheno1 <- mk_pheno(bo1)
+
+df1 <- bed_R_lm(bo1, pheno1)
+df1
+#   CHR         SNP MORGANS   POS A1 A2        BETA      STAT      PVAL
+# 1   1  rs58108140       0 10583  A  G -0.06726087 1.0605111 0.3033271
+# 2   1 rs189107123       0 10611  G  C -0.11446071 0.5182898 0.4717264
+
+pheno2
+df2 <- bed_plink_lm(bo1, pheno1)
+df2
+#   CHR         SNP    BP A1 TEST NMISS     BETA    STAT      P
+# 1   1  rs58108140 10583  A  ADD  1092 -0.06726 -1.0300 0.3033
+# 2   1 rs189107123 10611  G  ADD  1092 -0.11450 -0.7199 0.4717
+
+
+good_samples <- which(!is.na(pheno))
+bo3 <- bed_subset(bo1, sample_idx = good_samples)
+
+pheno2 <- pheno1
+pheno2[1] <- -9L
+df2 <- bed_plink_lm(bo1, pheno2)
+df2
+#   CHR         SNP    BP A1 TEST NMISS   BETA    STAT      P
+# 1   1  rs58108140 10583  A  ADD  1091 -0.068 -1.0410 0.2982
+# 2   1 rs189107123 10611  G  ADD  1091 -0.115 -0.7232 0.4697
+
+
+
+bb <- bed_subset(bo, snp_idx = c(57, 154:100))
+bbb <- bed_subset(bb, snp_idx = 2)
+bed_snp_idx(bbb)
+# [1] 100
+
+bed_bim_df(bbb)
+#     CHR         SNP MORGANS   POS A1 A2
+# 100   1 rs183605470       0 84139  T  A
+head(bed_bim_df(bbb, subset = FALSE))
+#   CHR         SNP MORGANS   POS A1 A2
+# 1   1  rs58108140       0 10583  A  G
+# 2   1 rs189107123       0 10611  G  C
+# 3   1 rs180734498       0 13302  T  C
+# 4   1 rs144762171       0 13327  C  G
+# 5   1 rs201747181       0 13957  T TC
+# 6   1 rs151276478       0 13980  C  T
+
+bed_subset(bo, snp_IDs = 'rs180734498')
+
+
+
 
 out <- bed_plink_lm(bo2, mk_pheno(bo2))
 head(out)
