@@ -46,15 +46,20 @@ bed_R_lm <- function(bo,
     fit <- stats::lm(as.formula(fo), data = df, model = TRUE)
     sm <- summary(fit)
 
-    data.frame(
+    vars <- names(df)[-1]
+    res <- data.frame(
       bim[i, , drop = FALSE],
-      TEST = names(df)[-1],
-      NMISS = nrow(fit$model),
-      BETA = fit$coefficients[-1],
-      STAT = sm$coefficients[-1, 't value'],
-      P = sm$coefficients[-1, 'Pr(>|t|)'],
+      TEST = vars,
       row.names = NULL,
       stringsAsFactors = FALSE)
+
+    res$NMISS <- nrow(fit$model)
+    # N.B: some vars may be absent from the summary
+    res$BETA <- fit$coefficients[vars]
+    res$STAT <-sm$coefficients[, 't value'][vars]
+    res$P <- sm$coefficients[, 'Pr(>|t|)'][vars]
+
+    res
   }
 
   dfs <- lapply(1:nb_snps, .process_snp)

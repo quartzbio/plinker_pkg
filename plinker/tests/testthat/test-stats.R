@@ -26,11 +26,14 @@ context('R stats')
   fam <- bed_fam_df(bo1)
   covars <- fam[, 1:2]
 
-  # constant covar
+  # constant covar ==> all corresponding stats are NA
   covars$CONST <- 1
   res2 <- bed_R_lm(bo1, covars = covars)
 
   expect_equivalent(res2[res2$TEST == 'ADD', ], res)
+  res3 <- res2[res2$TEST != 'ADD', 7:9]
+  expect_true(all(is.na(res3)))
+
 
   # non constant covars
   covars <- fam[, 1:2]
