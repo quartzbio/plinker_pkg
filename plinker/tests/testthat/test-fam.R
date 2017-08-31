@@ -79,10 +79,9 @@ test_that('save_fam', .save_fam())
   df <- data.frame(SUBJID = rev(ids), VALUE = seq_along(ids),
      stringsAsFactors = FALSE)
 
-
   mdf <- merge_df_with_fam(fam_df, df, ignore_fid = FALSE)
-  expect_identical(mdf[, 2:7], fam_df)
-  expect_identical(mdf[[1]], ids)
+
+  expect_identical(mdf[, -7], fam_df)
   expect_identical(mdf$VALUE, rev(seq_along(ids)))
 
   # subset
@@ -109,8 +108,7 @@ test_that('save_fam', .save_fam())
     'error, bad "id_var"')
 
   mdf <- merge_df_with_fam(fam_df, df, ignore_fid = TRUE)
-  expect_identical(mdf[, 2:7], fam_df)
-  expect_identical(mdf[[1]], ids)
+  expect_identical(mdf[, -7], fam_df)
   expect_identical(mdf$VALUE, rev(seq_along(ids)))
 
   # mismatch in ignore_fid

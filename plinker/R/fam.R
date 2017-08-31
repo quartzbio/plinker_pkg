@@ -58,9 +58,10 @@ compute_sample_IDs <- function(fam_df, ignore_fid) {
 #' a "left-join" style merge is performed on the FAM data frame.
 #' The merge is performed:
 #'   - either by (FID,IID) if present in df
-#'   - or by sample_IDs versus id_var
+#'   - or by sample_IDs versus id_var. in that case the id_var column
+#'     is removed from the merged data frame
 #'
-#' N.B: the sample_IDs are computed from fam_df using  ignore_fid
+#' N.B: the sample_IDs are computed from fam_df using ignore_fid
 #'
 #' will die unless each row of fam_df is matched exactly to one row of df
 #'
@@ -79,7 +80,9 @@ compute_sample_IDs <- function(fam_df, ignore_fid) {
 #' @export
 merge_df_with_fam <- function(fam_df, df, id_var = 'SUBJID', ignore_fid = FALSE) {
   cols <- c('FID', 'IID')
+  to_remove <- NULL
   by.x <- by.y <- NULL
+
   if (all(cols %in% names(df))) {
     by.x <- by.y <- cols
   } else {
@@ -87,11 +90,13 @@ merge_df_with_fam <- function(fam_df, df, id_var = 'SUBJID', ignore_fid = FALSE)
 
     fam_df[[id_var]] <- compute_sample_IDs(fam_df, ignore_fid)
 
-    by.x <- by.y <- id_var
+    to_remove <- by.x <- by.y <- id_var
   }
 
   res <- merge(fam_df, df, by.x = by.x, by.y = by.y,
     suffixes = c('', '.y'), sort = FALSE)
+
+  if (!is.null(to_remove)) res[[to_remove]] <- NULL
 
   if (nrow(res) != nrow(fam_df))
     stop('bad merge, different number of rows in the output')
