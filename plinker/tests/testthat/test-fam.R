@@ -67,30 +67,37 @@ test_that('save_fam', .save_fam())
   ############ by single ID ##################
   ## ignore_fid = FALSE
   ids <- bed_sample_IDs(bo, ignore_fid = FALSE)
+
+  df <- data.frame(MYID = rev(ids), VALUE = seq_along(ids),
+    stringsAsFactors = FALSE)
+  expect_error(merge_df_with_fam(fam_df, df, ignore_fid = FALSE),
+    'error, bad "id_var"')
+  expect_error(merge_df_with_fam(fam_df, df, id_var = 'MYID',ignore_fid = FALSE),
+    NA)
+
+
   df <- data.frame(SUBJID = rev(ids), VALUE = seq_along(ids),
      stringsAsFactors = FALSE)
 
-  expect_error(merge_df_with_fam(fam_df, df, ignore_fid = FALSE),
-     'error, bad "id_var"')
 
-  mdf <- merge_df_with_fam(fam_df, df, id_var = 'SUBJID', ignore_fid = FALSE)
+  mdf <- merge_df_with_fam(fam_df, df, ignore_fid = FALSE)
   expect_identical(mdf[, 2:7], fam_df)
   expect_identical(mdf[[1]], ids)
   expect_identical(mdf$VALUE, rev(seq_along(ids)))
 
   # subset
-  expect_error(merge_df_with_fam(fam_df,  df[1:10, ], id_var = 'SUBJID',
+  expect_error(merge_df_with_fam(fam_df,  df[1:10, ],
       ignore_fid = FALSE), 'bad merge')
 
   # superset
   df2 <- rbind(df[1, ], df)
   df2[1, 1] <- 'COCORICO'
-  mdf2 <- merge_df_with_fam(fam_df, df2, id_var = 'SUBJID', ignore_fid = FALSE)
+  mdf2 <- merge_df_with_fam(fam_df, df2, ignore_fid = FALSE)
   expect_identical(mdf2, mdf)
 
   # repeated rows
   df2 <- rbind(df[1, ], df)
-  expect_error(merge_df_with_fam(fam_df,  df2, id_var = 'SUBJID',
+  expect_error(merge_df_with_fam(fam_df,  df2,
       ignore_fid = FALSE), 'bad merge')
 
   ## ignore_fid = TRUE
@@ -98,17 +105,16 @@ test_that('save_fam', .save_fam())
   df <- data.frame(SUBJID = rev(ids), VALUE = seq_along(ids),
     stringsAsFactors = FALSE)
 
-  expect_error(merge_df_with_fam(fam_df, df, ignore_fid = TRUE),
+  expect_error(merge_df_with_fam(fam_df, df, id_var = 'MYID', ignore_fid = TRUE),
     'error, bad "id_var"')
 
-  mdf <- merge_df_with_fam(fam_df, df, id_var = 'SUBJID', ignore_fid = TRUE)
+  mdf <- merge_df_with_fam(fam_df, df, ignore_fid = TRUE)
   expect_identical(mdf[, 2:7], fam_df)
   expect_identical(mdf[[1]], ids)
   expect_identical(mdf$VALUE, rev(seq_along(ids)))
 
   # mismatch in ignore_fid
-  expect_error(merge_df_with_fam(fam_df,  df, id_var = 'SUBJID',
-      ignore_fid = FALSE), 'bad merge')
+  expect_error(merge_df_with_fam(fam_df,  df, ignore_fid = FALSE), 'bad merge')
 
 }
 test_that('merge_df_with_fam', .merge_df_with_fam())

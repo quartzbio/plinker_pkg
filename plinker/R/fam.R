@@ -77,18 +77,17 @@ compute_sample_IDs <- function(fam_df, ignore_fid) {
 #' 										(cf [compute_sample_IDs()])
 #' @return the merged data frame
 #' @export
-merge_df_with_fam <- function(fam_df, df, id_var = 'IID', ignore_fid = FALSE) {
+merge_df_with_fam <- function(fam_df, df, id_var = 'SUBJID', ignore_fid = FALSE) {
   cols <- c('FID', 'IID')
   by.x <- by.y <- NULL
   if (all(cols %in% names(df))) {
     by.x <- by.y <- cols
   } else {
-    fam_df[[id_var]] <- compute_sample_IDs(fam_df, ignore_fid)
-
     if (!id_var %in% names(df)) stop('error, bad "id_var"')
 
-    by.x <- by.y <- id_var
+    fam_df[[id_var]] <- compute_sample_IDs(fam_df, ignore_fid)
 
+    by.x <- by.y <- id_var
   }
 
   res <- merge(fam_df, df, by.x = by.x, by.y = by.y,
