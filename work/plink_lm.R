@@ -8,7 +8,6 @@ mk_pheno <- function(bo) {
 
 bo <- bed_open('1kg_phase1_chr1')
 
-miss <- bed_plink_missing(bo)
 
 freqx <- bed_plink_freqx(bo)
 non_rare <- which(freqx$`C(HOM A1)` > 100)
@@ -16,8 +15,48 @@ non_rare <- which(freqx$`C(HOM A1)` > 100)
 bo2 <- bed_subset(bo, snp_idx = non_rare)
 
 
-bo1 <- bed_subset(bo, snp_idx= 1:2)
+bo1 <- bed_subset(bo, snp_idx= 1:2, sample_idx = 1:10)
 pheno1 <- mk_pheno(bo1)
+fam1 <- bed_fam_df(bo1)
+
+
+bed_plink_lm(bo1, pheno1)
+
+covars1 <- fam1[, 1:2]
+covars1$TOTO <- c(rep(1, 5), c(rep(2, 5)))
+covars1$TITI <- 1:nrow(covars1)
+res1 <- bed_plink_lm(bo1, pheno1, covars = covars1)
+#   CHR         SNP    BP A1 TEST NMISS    BETA    STAT      P
+# 1   1  rs58108140 10583  A  ADD    10  0.4969  0.6584 0.5347
+# 2   1  rs58108140 10583  A TOTO    10  0.6100  0.4423 0.6738
+# 3   1  rs58108140 10583  A TITI    10 -0.1895 -0.7939 0.4575
+# 4   1 rs189107123 10611  G  ADD    10 -0.8176 -0.6638 0.5315
+# 5   1 rs189107123 10611  G TOTO    10  0.7502  0.5470 0.6041
+# 6   1 rs189107123 10611  G TITI    10 -0.2303 -0.9350 0.3859
+
+res2 <- bed_R_lm(bo1, pheno1, covars = covars1)
+#   CHR         SNP    BP A1 TEST NMISS       BETA       STAT         P
+# 1   1  rs58108140 10583  A  ADD    10  0.4968941  0.6584306 0.5346955
+# 2   1 rs189107123 10611  G TOTO    10  0.6099845  0.4422743 0.6737872
+# 3   1  rs58108140 10583  A TITI    10 -0.1894505 -0.7938564 0.4575172
+# 4   1 rs189107123 10611  G  ADD    10 -0.8175977 -0.6638060 0.5314785
+# 5   1  rs58108140 10583  A TOTO    10  0.7502432  0.5470069 0.6041070
+# 6   1 rs189107123 10611  G TITI    10 -0.2303304 -0.9350241 0.3858627
+all.equal(res2, res, tolerance = 1e-4)
+
+covars1 <- fam1[, 1:2]
+covars1$TOTO <-  LETTERS[1:nrow(covars1)]
+bed_plink_lm(bo1, pheno1, covars = covars1)
+# Error in read_plink_output("plink.assoc.linear") :
+#   plink output file does not exist:plink.assoc.linear
+
+
+bed_plink_lm(bo1, pheno1)
+#   CHR         SNP    BP A1 TEST NMISS    BETA    STAT      P
+# 1   1  rs58108140 10583  A  ADD    10  0.4166  0.6105 0.5585
+# 2   1 rs189107123 10611  G  ADD    10 -0.3387 -0.3196 0.7574
+
+
 
 df1 <- bed_R_lm(bo1, pheno1)
 df1
