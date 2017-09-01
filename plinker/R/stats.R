@@ -8,7 +8,6 @@
 #' @param covars		the optional covars, as a data frame
 #' @export
 #' @family plink
-#' @seealso make_phenotype_from_vector
 #' @seealso bed_phenotype_from_df
 bed_R_lm <- function(bo,
   phenotype = bed_fam_df(bo)$PHENO,

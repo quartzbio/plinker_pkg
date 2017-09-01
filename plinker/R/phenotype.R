@@ -1,39 +1,5 @@
 
 
-#' make a phenotype vector to use with PLINK
-#'
-#'
-#' Case/control phenotypes are expected to be encoded as:
-#'   - 1=unaffected (control)
-#'   - 2=affected (case)
-#'
-#' Missing phenotype is encoded by -9 by default.
-#'
-#'
-#' cf <https://www.cog-genomics.org/plink/1.9/input#pheno>
-#'
-#' @inheritParams params
-#' @param phenotype								the variable to consider
-#' @param missing_phenotype 			integer value for replacing NA values in
-#' 																the variable
-#' @export
-make_phenotype_from_vector <- function(phenotype, missing_phenotype = -9L)
-{
-  nas_ind <- which(is.na(phenotype))
-  if (length(nas_ind) == 0) return(phenotype)
-
-  check_missing_phenotype(missing_phenotype)
-
-  # check for occurrences of the missing_phenotype prior to substitute NA
-  if (any(phenotype == missing_phenotype, na.rm = TRUE)) {
-    stop('ERROR, the phenotype vector contain some "missing_phenotype"!')
-  }
-
-  phenotype[nas_ind] <- missing_phenotype
-
-  phenotype
-}
-
 check_missing_phenotype <- function(missing_phenotype) {
   if (!is.integer(missing_phenotype) || length(missing_phenotype) != 1 ||
     is.na(missing_phenotype) || missing_phenotype >= 0)
@@ -66,7 +32,6 @@ check_quantitative_phenotype <- function(phenotype, nb_samples) {
 #' @inheritDotParams merge_df_with_fam
 #' @inheritParams params
 #' @export
-#' @seealso make_phenotype_from_vector
 bed_phenotype_from_df <- function(bo,
   df,
   phenotype_var,
