@@ -39,11 +39,32 @@ test_that('dummify_df_vars', .dummify_df_vars())
   bo <- bed_open(plinker:::fetch_sample_bed())
   fam <- bed_fam_df(bo)
 
-  expect_error(check_plink_covars(fam, fam), NA)
+  expect_error(check_plink_covars(fam, fam),
+    'Error, categorical covariates: FATHER_ID, MOTHER_ID')
 
   expect_error(check_plink_covars(iris, fam), 'missing required')
 
   expect_error(check_plink_covars(head(fam), fam), 'do not match')
+
+  ### constant covars
+  covars <- fam[, 1:2]
+  covars$COVAR1 <- 1:nrow(covars)
+  covars$CONST1 <- 1
+  covars$COVAR2 <- rev(covars$COVAR1)
+  covars$CONST2 <- 2
+  covars$CONST2[1] <- NA
+
+  expect_error(check_plink_covars(covars, fam),
+    'constant covariates: CONST1, CONST2')
+
+  ### categorical variables
+  covars <- fam[, 1:2]
+  covars$STR <- 'toto'
+  covars$STR[2] <- 'titi'
+  covars$COVAR1 <- 1:nrow(covars)
+  covars$FACTOR <- as.factor(1:nrow(covars))
+  expect_error(check_plink_covars(covars, fam),
+    'categorical covariates: STR, FACTOR')
 }
 test_that('check_plink_covars', .check_plink_covars())
 
@@ -59,7 +80,8 @@ test_that('check_plink_covars', .check_plink_covars())
 
   ids <- bed_sample_IDs(bo)
 
-  ##### test 1 - subjid
+
+  ##### subjid
 
   covars <- data.frame(
     SUBJID = rev(ids),
@@ -100,6 +122,9 @@ test_that('check_plink_covars', .check_plink_covars())
   expect_identical(df[, 1:2], fam[, 1:2])
   fct <- as.factor(covars$CATEG)
   expect_identical(names(df)[-(1:2)], paste0('CATEG', levels(fct)[-1]))
+
+
+
 
 }
 test_that('bed_make_covars', .bed_make_covars())

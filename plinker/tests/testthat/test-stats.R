@@ -34,7 +34,6 @@ context('R stats')
   res3 <- res2[res2$TEST != 'ADD', 7:9]
   expect_true(all(is.na(res3)))
 
-
   # non constant covars
   covars <- fam[, 1:2]
   covars$COVAR1 <- c(rep(1, nbind - 50), c(rep(2, 50)))
@@ -50,6 +49,10 @@ context('R stats')
   res3 <- bed_R_lm(bo1, covars = covars)
   expect_identical(res3, res2)
 
+  # dummified categorical covar
+  covars <- bed_make_covars(bo1, covars)
+  res3 <- bed_R_lm(bo1, covars = covars)
+  expect_identical(res3, res2)
 }
 test_that('bed_R_lm', .bed_R_lm())
 

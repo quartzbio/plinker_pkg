@@ -1,12 +1,13 @@
 #' check the covariates to be used with PLINK
 #'
+#' N.B: the missing value should (still) be encoded as NA
+#'
 #' @inheritParams params
 #' @inheritParams merge_df_with_fam
 #' @param covars 	the covars as a data frame,
-#' 		as e.g. returned by [bed_make_covars()]
-#'
-#' @return the covariates formatted for PLINK, as a data frame
-#' @export
+#' 		as e.g. returned by [bed_make_covars()]. must not contain constant covars,
+#' 		nor categorical covars.
+#' @keywords internal
 check_plink_covars <- function(covars, fam_df) {
 
   if (!identical(names(covars)[1:2], c('FID', 'IID'))) {
@@ -17,8 +18,24 @@ check_plink_covars <- function(covars, fam_df) {
     stop('columns FID and IID do not match')
   }
 
-  # check covars columns content (TODO)
+  ### check covars columns content (TODO)
 
+  # check for constant covars
+  df <- covars[, -(1:2), drop = FALSE]
+  .uniq_len <- function(col) length(stats::na.omit(unique(col)))
+  lens <- sapply(df, .uniq_len)
+  ones <- which(lens == 1L)
+  if (length(ones) > 0) {
+    stop('Error, constant covariates: ', paste0(names(df)[ones], collapse = ', '))
+  }
+
+  # check for categorical variables
+  .is_categorical <- function(col) is.character(col) || is.factor(col)
+  categs <- which(sapply(df, .is_categorical))
+  if (length(categs) > 0) {
+    stop('Error, categorical covariates: ',
+      paste0(names(df)[categs], collapse = ', '))
+  }
 
   invisible()
 }
@@ -33,7 +50,7 @@ dummify_df_vars <- function(df, ...) {
   vars <- names(df)
   fo <- paste0('~', paste0(vars, collapse = ' + '))
 
-  res <- stats::model.matrix(as.formula(fo), df, ...)
+  res <- stats::model.matrix(stats::as.formula(fo), df, ...)
 
   res[, -1, drop = FALSE]
 }

@@ -5,6 +5,7 @@
 #' @inheritParams params
 #' @inheritParams recode_genotypes
 #' @param phenotype a quantitative phenotype/response vector
+#' @param covars		the optional covars, as a data frame
 #' @export
 #' @family plink
 #' @seealso make_phenotype_from_vector
@@ -21,10 +22,6 @@ bed_R_lm <- function(bo,
     additive = 'ADD',
     dominant = 'DOM',
     recessive = 'REC', stop('error'))
-
-  if (!is.null(covars)) {
-    check_plink_covars(covars, bed_fam_df(bo))
-  }
 
   bim <- bed_bim_df(bo)
   bim <- bim[, c('CHR', 'SNP', 'POS', 'A1')]
@@ -43,10 +40,10 @@ bed_R_lm <- function(bo,
       df <- cbind(df, cdf)
     }
 
-    fit <- stats::lm(as.formula(fo), data = df, model = TRUE)
+    fit <- stats::lm(fo, data = df, model = TRUE)
     sm <- summary(fit)
 
-    vars <- names(df)[-1]
+    vars <- names(fit$coefficients[-1])
     res <- data.frame(
       bim[i, , drop = FALSE],
       TEST = vars,
