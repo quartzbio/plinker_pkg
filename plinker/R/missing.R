@@ -13,8 +13,11 @@ compute_missing_value_candidate_for_numeric <- function(v, candidate = -9L) {
 }
 
 
-compute_missing_value_candidate <- function(pheno, covars = NULL) {
-
+compute_missing_value_candidate <- function(pheno, covars = NULL, ...) {
+  values <- if (is.null(covars))
+      pheno else
+      c(pheno, as.numeric(data.matrix(covars)))
+  compute_missing_value_candidate_for_numeric(values, ...)
 }
 
 
