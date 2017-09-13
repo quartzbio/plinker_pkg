@@ -20,3 +20,19 @@ read_bim <- function(path) {
   )
 }
 
+#' save a plink .bim file
+#'
+#' @param bim_df		the .bim data frame
+#' @param path			the .bim file path
+#' @return a data frame
+#' @export
+#' @seealso read_bim
+save_bim <- function(bim_df, path) {
+  df <- data.table::fwrite(bim_df, path,
+    sep = '\t',
+    col.names = FALSE,
+    verbose = FALSE,
+    quote = FALSE,
+    showProgress = FALSE
+  )
+}
