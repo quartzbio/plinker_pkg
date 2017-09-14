@@ -46,28 +46,55 @@ plink_version <- function(...) {
 #'
 #' @param input_prefix		the prefix for the .tped/.tfam input files
 #' @param output_prefix   the prefix for the output (.bed, .bim, .fam) files
-#' @inheritParams save_plink_alleles
+#' @param not_chr 				chromosomes to exclude
 #' @inheritDotParams plink_cmd -args
 #' @export
 #' @seealso plink_bfile_to_tfile
-plink_tfile_to_bfile <- function(input_prefix, output_prefix, ...) {
+plink_tfile_to_bfile <- function(input_prefix, output_prefix, not_chr = '0', ...) {
 
   args <- c(
     sprintf('--tfile %s', input_prefix),
-    sprintf('--out %s', output_prefix)
+    sprintf('--out %s', output_prefix),
+    sprintf('--not-chr %s', not_chr)
     )
-
 
   plink_cmd(args, ...)
 }
 
+#' save a new PLINK binary dataset with alleles ordered lexicographically
+#'
+#' @param input_prefix		the prefix for the input bed dataset
+#' @param output_prefix   the prefix for the output bed dataset
+#' @inheritDotParams plink_cmd -args
+#' @export
+save_plink_with_lexicographic_alleles_order <- function(input_prefix,
+  output_prefix, ...) {
+
+  bo <- bed_open(input_prefix)
+  bim <- bed_bim_df(bo)
+  bim$a2max <- with(bim, pmax(A1, A2))
+
+  alleles_file <- tempfile()
+  save_bim(bim[, c('SNP', 'a2max')], alleles_file)
+  on.exit(unlink(alleles_file), add = TRUE)
+
+  args <- c(
+    sprintf('--bfile %s', input_prefix),
+    sprintf('--a2-allele  %s', alleles_file),
+    '--make-bed',
+    sprintf('--out %s', output_prefix)
+  )
+
+  plink_cmd(args, ...)
+}
+
+
 #' convert a  a bed dataset dataset to a PLINK transposed tped dataset
 #'
-#' TODO: check if the MAF filter is applied
 #'
-#' @inheritParams plink_tfile_to_bfile
 #' @param input_prefix		the prefix for the output (.bed, .bim, .fam) files
 #' @param output_prefix		the prefix for the output .tped/.tfam input files
+#' @inheritDotParams plink_cmd -args
 #' @export
 #' @seealso plink_tfile_to_bfile
 plink_bfile_to_tfile <- function(input_prefix, output_prefix, ...) {

@@ -1,5 +1,32 @@
 context('plink')
 
+
+.save_plink_with_lexicographic_alleles_order <- function() {
+  bo <- bed_open(plinker:::fetch_sample_bed())
+
+  a1 <- bed_allele1(bo)
+  a2 <- bed_allele2(bo)
+
+  # not ordered
+  expect_equal(sum(a1 > a2), 9)
+
+  setup_temp_dir()
+  save_plink_with_lexicographic_alleles_order(plinker:::fetch_sample_bed(),
+    'toto', quiet = F)
+
+  bo2 <- bed_open('toto')
+  b1 <- bed_allele1(bo2)
+  b2 <- bed_allele2(bo2)
+  # check alleles
+  expect_equal(sum(b1 > b2), 0)
+
+  expect_identical(bed_genotypes_as_strings(bo2), bed_genotypes_as_strings(bo))
+}
+test_that('save_plink_with_lexicographic_alleles_order',
+  .save_plink_with_lexicographic_alleles_order())
+
+
+
 .save_plink_alleles <- function() {
   save_plink_alleles <- plinker:::save_plink_alleles
   bo <- bed_open(plinker:::fetch_sample_bed())
