@@ -12,20 +12,20 @@ context('SNP subset')
   expect_error(bed_subset_snps_by_IDs(bo, "toto"), 'bad snp_IDs')
 
   bim_df <- bed_bim_df(bo)
-  idx <- c(5:12, 1, 6, 16)
+  idx <- c(5:12, 1L, 16L)
   ids <- bim_df$SNP[idx]
 
   bo2 <- bed_subset_snps_by_IDs(bo, ids)
 
   expect_equal(bed_nb_snps(bo2), 10)
   expect_equal(bed_nb_snps(bo2, subset = FALSE), 17)
-  idx2 <- as.integer(sort(unique(idx)))
-  expect_identical(bed_snp_idx(bo2), idx2)
-  expect_identical(sort(bed_snp_IDs(bo2)), sort(unique(ids)))
+
+  expect_identical(bed_snp_idx(bo2), idx)
+  expect_identical(bed_snp_IDs(bo2), ids)
 
   df <- bed_bim_df(bo2)
-  expect_equal(rownames(df), as.character(idx2))
-  expect_identical(df, bed_bim_df(bo2, subset = FALSE)[idx2, ])
+  expect_equal(rownames(df), as.character(idx))
+  expect_identical(df, bed_bim_df(bo2, subset = FALSE)[idx, ])
 
   ### recursive subsetting
   ids2 <- ids[c(2, 4:7, 9)]
@@ -56,8 +56,10 @@ test_that('bed_subset_snps_by_IDs', .bed_subset_snps_by_IDs())
   ### edge cases
   expect_error(bed_subset_snps_by_idx(bo, NULL), 'empty snp_idx')
   expect_error(bed_subset_snps_by_idx(bo, 20), 'bad snp_idx range')
+  expect_error(bed_subset_snps_by_idx(bo, c(1, 2, 1)), 'duplicated')
+  expect_error(bed_subset_snps_by_idx(bo, c(1, NA)), 'missing')
 
-  bo2 <- bed_subset_snps_by_idx(bo, c(3, 5, 16, 3, 5))
+  bo2 <- bed_subset_snps_by_idx(bo, c(3, 5, 16))
 
   expect_equal(bed_nb_snps(bo2), 3)
   expect_equal(bed_nb_snps(bo2, subset = FALSE), 17)
@@ -68,14 +70,14 @@ test_that('bed_subset_snps_by_IDs', .bed_subset_snps_by_IDs())
   expect_identical(df, bed_bim_df(bo2, subset = FALSE)[c(3L, 5L, 16L), ])
 
   ### recursive subsetting
-  bo3 <- bed_subset_snps_by_idx(bo2, c(3, 1, 3))
+  bo3 <- bed_subset_snps_by_idx(bo2, c(3, 1))
   expect_equal(bed_nb_snps(bo3), 2)
   expect_equal(bed_nb_snps(bo3, subset = FALSE), 17)
-  expect_identical(bed_snp_idx(bo3), c(3L, 16L))
+  expect_identical(bed_snp_idx(bo3), c(16L, 3L))
 
   bo4 <-  bed_subset_snps_by_idx(bo3, 2)
   expect_equal(bed_nb_snps(bo4), 1)
-  expect_identical(bed_snp_idx(bo4), 16L)
+  expect_identical(bed_snp_idx(bo4), 3L)
 }
 test_that('bed_subset_snps_by_idx', .bed_subset_snps_by_idx())
 
@@ -85,7 +87,7 @@ test_that('bed_subset_snps_by_idx', .bed_subset_snps_by_idx())
   bo <- bed_open(plinker:::fetch_sample_bed())
   expect_equal(bed_nb_snps(bo), 17)
 
-  bo2 <- bed_subset_snps_by_idx(bo, c(3, 5, 16, 3, 5))
+  bo2 <- bed_subset_snps_by_idx(bo, c(3, 5, 16))
   expect_equal(bed_nb_snps(bo2), 3)
 
   bo3 <- bed_reset_subset_snps_by_idx(bo2)
