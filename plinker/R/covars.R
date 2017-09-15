@@ -14,7 +14,7 @@ check_plink_covars <- function(covars, fam_df) {
     stop('missing required first columns FID and IID')
   }
   # check IDs
-  if (!identical(covars[, 1:2], fam_df[, 1:2])) {
+  if (!all(mapply(identical, covars[, 1:2], fam_df[, 1:2]))) {
     stop('columns FID and IID do not match')
   }
 
