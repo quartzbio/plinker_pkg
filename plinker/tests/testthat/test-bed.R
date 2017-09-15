@@ -135,7 +135,6 @@ test_that('bed_sample_IDs', .bed_sample_IDs())
   expect_error(bed_subset(bo, sample_IDs = sample_ids, sample_idx = 1),
     "incompatible parameters")
 
-
   expect_identical(bed_subset(bo, snp_IDs = snp_ids[10:15]),
     bed_subset_snps_by_IDs(bo, snp_ids[10:15]))
   expect_identical(bed_subset(bo, snp_idx = 3),
@@ -151,6 +150,6 @@ test_that('bed_sample_IDs', .bed_sample_IDs())
 
   bo3 <- bed_subset(bo2, snp_IDs = snp_ids[5:6], sample_idx = 4:2)
   expect_identical(bed_snp_idx(bo3), 5:6)
-  expect_identical(bed_sample_idx(bo3), (10:15)[2:4])
+  expect_identical(bed_sample_idx(bo3), (10:15)[4:2])
 }
 test_that('bed_subset', .bed_subset())

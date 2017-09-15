@@ -9,8 +9,11 @@ context('Sample subset')
   ### edge cases
   expect_error(bed_subset_samples_by_idx(bo, NULL), 'empty sample_idx')
   expect_error(bed_subset_samples_by_idx(bo, 100), 'bad sample_idx range')
+  # duplicates
+  expect_error(bed_subset_samples_by_idx(bo, c(1, 2, 1)), 'duplicated')
+  expect_error(bed_subset_samples_by_idx(bo, c(1, NA)), 'missing')
 
-  bo2 <- bed_subset_samples_by_idx(bo, c(21:30, 25:35))
+  bo2 <- bed_subset_samples_by_idx(bo, c(21:35))
 
   expect_equal(bed_nb_samples(bo2), 15)
   expect_equal(bed_nb_samples(bo2, subset = FALSE), 89)
@@ -21,14 +24,18 @@ context('Sample subset')
   expect_identical(df, bed_fam_df(bo2, subset = FALSE)[21:35, ])
 
   ### recursive subsetting
-  bo3 <- bed_subset_samples_by_idx(bo2, c(3, 1, 3))
-  expect_equal(bed_nb_samples(bo3), 2)
+  bo3 <- bed_subset_samples_by_idx(bo2, c(3, 1, 5))
+  expect_equal(bed_nb_samples(bo3), 3)
   expect_equal(bed_nb_samples(bo3, subset = FALSE), 89)
-  expect_identical(bed_sample_idx(bo3), c(21L, 23L))
+  expect_identical(bed_sample_idx(bo3), c(23L, 21L, 25L))
 
   bo4 <-  bed_subset_samples_by_idx(bo3, 2)
   expect_equal(bed_nb_samples(bo4), 1)
-  expect_identical(bed_sample_idx(bo4), 23L)
+  expect_identical(bed_sample_idx(bo4), 21L)
+
+  ### ordering
+  bo2 <- bed_subset_samples_by_idx(bo, 10:5)
+  expect_identical(bed_sample_idx(bo2), 10:5)
 }
 test_that('bed_subset_samples_by_idx', .bed_subset_samples_by_idx())
 
@@ -38,7 +45,7 @@ test_that('bed_subset_samples_by_idx', .bed_subset_samples_by_idx())
   bo <- bed_open(plinker:::fetch_sample_bed())
   expect_equal(bed_nb_samples(bo), 89)
 
-  bo2 <- bed_subset_samples_by_idx(bo, c(3, 5, 16, 3, 5))
+  bo2 <- bed_subset_samples_by_idx(bo, c(3, 5, 16))
   expect_equal(bed_nb_samples(bo2), 3)
 
   bo3 <- bed_reset_subset_samples_by_idx(bo2)
@@ -56,6 +63,9 @@ test_that('bed_reset_subset_samples_by_idx', .bed_reset_subset_samples_by_idx())
 
   sample_ids <- bed_sample_IDs(bo)
   sample_iids <- bed_sample_IDs(bo, ignore_fid = TRUE)
+
+  expect_error(bed_sample_IDs_to_idx(bo, NULL), 'empty sample IDs')
+  expect_error(bed_sample_IDs_to_idx(bo, sample_ids[c(1,1)]), 'duplicated')
 
   expect_error(bed_sample_IDs_to_idx(bo, fam_df$IID), 'bad sample IDs')
 
@@ -91,7 +101,7 @@ test_that('bed_sample_IDs_to_idx', .bed_sample_IDs_to_idx())
   expect_equal(nb, 89)
 
   ### edge cases
-  expect_error(bed_subset_samples_by_IDs(bo, NULL), 'empty sample_idx')
+  expect_error(bed_subset_samples_by_IDs(bo, NULL), 'empty sample IDs')
   expect_error(bed_subset_samples_by_IDs(bo, "toto"), 'bad sample ID')
 
   ids <- bed_sample_IDs(bo)
@@ -100,7 +110,7 @@ test_that('bed_sample_IDs_to_idx', .bed_sample_IDs_to_idx())
 
   expect_equal(bed_nb_samples(bo2), 11)
   expect_equal(bed_nb_samples(bo2, subset = FALSE), 89)
-  expect_identical(bed_sample_idx(bo2), 30:40)
+  expect_identical(bed_sample_idx(bo2), 40:30)
 
   ### recursive subsetting
   ids3 <- ids[35:38]

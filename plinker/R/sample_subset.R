@@ -1,4 +1,4 @@
-#' select a subset of samples in a plink dataset
+#' select a subsequence of samples in a plink dataset
 #'
 #' @inheritParams params
 #' @return the subsetted bed dataset object
@@ -7,11 +7,21 @@
 bed_subset_samples_by_idx <- function(bo, sample_idx) {
   if (length(sample_idx) == 0) stop('empty sample_idx')
 
-  # cleanup
-  sample_idx <- sort(unique(as.integer(sample_idx)))
+  # check
+  if (anyDuplicated(sample_idx) > 0) {
+    stop('Error, you have duplicated sample indices')
+  }
 
-  # check the idx
-  if (sample_idx[1] < 1 || sample_idx[length(sample_idx)] > bed_nb_samples(bo))
+  if (any(is.na(sample_idx))) {
+    stop('Error, you have missing (NA) sample indices')
+  }
+
+  # cleanup
+  sample_idx <- as.integer(sample_idx)
+
+  # check the range
+  rg <- range(sample_idx)
+  if (rg[1] < 1 || rg[2] > bed_nb_samples(bo))
     stop('bad sample_idx range')
 
   # apply the subset
@@ -33,15 +43,7 @@ bed_subset_samples_by_idx <- function(bo, sample_idx) {
 #' @family subset
 #' @export
 bed_subset_samples_by_IDs <- function(bo, sample_IDs) {
-  current_ids <- bed_sample_IDs(bo, subset = TRUE)
-
-  idx <- match(sample_IDs, current_ids)
-  bads <- which(is.na(idx))
-  if (length(bads) > 0) {
-    bad_ids <- sample_IDs[bads]
-    stop(sprintf('Error, bad sample IDs: "%s"', paste0(bad_ids, collapse = ',')))
-  }
-
+  idx <- bed_sample_IDs_to_idx(bo, sample_IDs)
   bed_subset_samples_by_idx(bo, idx)
 }
 
@@ -69,6 +71,12 @@ bed_reset_subset_samples_by_idx <- function(bo) {
 bed_sample_IDs_to_idx <- function(bo, sample_IDs, subset = TRUE,
   ignore_fid = bed_ignore_fid(bo))
 {
+  if (length(sample_IDs) == 0) stop('empty sample IDs')
+
+  if (anyDuplicated(sample_IDs) > 0) {
+    stop('Error, you have duplicated sample IDs')
+  }
+
   all_ids <- bed_sample_IDs(bo, subset = subset, ignore_fid = ignore_fid)
   idx <- match(sample_IDs, all_ids)
 
