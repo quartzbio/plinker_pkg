@@ -21,6 +21,7 @@ plink_cmd <- function(args, command = Sys.which('plink'),
   }
 
   if (status != 0) {
+    args <- paste(args, collapse = ' ')
     cmd <- paste(command, args, collapse = ' ')
     msg <- sprintf('ERROR running plink "%s", exit status=%i', cmd, status)
     stop(msg)
