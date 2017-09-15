@@ -1,13 +1,13 @@
 
 #' compute linear regression using with covariates using R
 #'
-#' @inheritDotParams bed_plink_cmd -bo -args
 #' @inheritParams params
 #' @inheritParams recode_genotypes
 #' @param phenotype a quantitative phenotype/response vector
 #' @param covars		the optional covars, as a data frame
 #' @export
 #' @family plink
+
 #' @seealso bed_phenotype_from_df
 bed_R_lm <- function(bo,
   phenotype = bed_fam_df(bo)$PHENO,
@@ -64,3 +64,42 @@ bed_R_lm <- function(bo,
   df
 }
 
+#' compute fisher test using R
+#'
+#' @inheritParams params
+#' @param phenotype		a binary phenotype vector as an integer vector
+#' 	Case/control phenotypes are expected to be encoded as:
+#'   - 1=unaffected (control)
+#'   - 2=affected (case)
+#' @export
+#' @family stats
+#' @seealso bed_phenotype_from_df
+bed_R_fisher <- function(bo, phenotype = bed_fam_df(bo)$PHENO) {
+  nb_snps <- bed_nb_snps(bo)
+
+  bim <- bed_bim_df(bo)
+  bim <- bim[, c('CHR', 'SNP', 'A1', 'A2')]
+
+  .process_snp <- function(i) {
+    genos <- bed_genotypes(bo, snp_idx = i)
+
+    tt <- table(genos, phenotype)
+    res <- fisher.test(tt, conf.int = FALSE)
+
+    df <- data.frame(
+      bim[i, , drop = FALSE],
+      TEST = 'GENO',
+      row.names = NULL,
+      AFF = paste0(tt[3:1,  2], collapse = '/'),
+      UNAFF = paste0(tt[3:1,  1], collapse = '/'),
+      P = res$p.value,
+      stringsAsFactors = FALSE)
+
+    df
+  }
+
+  dfs <- lapply(1:nb_snps, .process_snp)
+  df <- do.call(rbind, dfs)
+
+  df
+}

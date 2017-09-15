@@ -2,6 +2,7 @@
 
 S3method(as.data.frame,plinker_bed)
 S3method(print,plinker_bed)
+export(bed_R_fisher)
 export(bed_R_lm)
 export(bed_allele1)
 export(bed_allele2)
