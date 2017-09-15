@@ -80,6 +80,8 @@ bed_R_lm <- function(bo,
 
 #' compute fisher test using R
 #'
+#' currently only compute the genotypic fisher test
+#'
 #' @inheritParams params
 #' @param phenotype		a binary phenotype vector as an integer vector
 #' 	Case/control phenotypes are expected to be encoded as:
@@ -96,9 +98,10 @@ bed_R_fisher <- function(bo, phenotype = bed_fam_df(bo)$PHENO) {
 
   .process_snp <- function(i) {
     genos <- bed_genotypes(bo, snp_idx = i)
+    genos <- factor(genos, levels = 0:2)
 
     tt <- table(genos, phenotype)
-    res <- fisher.test(tt, conf.int = FALSE)
+    res <- stats::fisher.test(tt, conf.int = FALSE)
 
     df <- data.frame(
       bim[i, , drop = FALSE],
