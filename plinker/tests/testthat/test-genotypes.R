@@ -81,7 +81,6 @@ test_that('make_genotype_converters', .make_genotype_converters())
   strs <- convert_genotypes_to_string(g1, 'A', 'T')
   expect_equal(dim(strs), c(1, 1))
   expect_equivalent(strs, 'T/T')
-
 }
 test_that('convert_genotypes_to_string', .convert_genotypes_to_string())
 
@@ -90,7 +89,7 @@ test_that('convert_genotypes_to_string', .convert_genotypes_to_string())
 .bed_genotypes_as_strings <- function() {
   bo <- bed_open(plinker:::fetch_sample_bed())
 
-  bo2 <- bed_subset(bo, snp_idx = 5:10, sample_idx = 31:40)
+  bo2 <- bed_subset(bo, snp_idx = 10:5, sample_idx = 40:31)
   strs <- bed_genotypes_as_strings(bo2, sort = FALSE)
 
   setup_temp_dir()
@@ -98,6 +97,6 @@ test_that('convert_genotypes_to_string', .convert_genotypes_to_string())
   ped <- read_plink_ped('foo.ped')
   strs2 <- plinker:::extract_genotypes_from_ped(ped)
 
-  expect_equivalent(strs, strs2)
+  expect_equivalent(strs, strs2[10:1, 6:1])
 }
 test_that('bed_genotypes_as_strings', .bed_genotypes_as_strings())

@@ -5,7 +5,6 @@
 #' @inheritParams convert_genotypes_to_string
 #' @param subset	whether to consider subset info from the bo object.
 #' 	if FALSE, no other params must be given
-#' @param ... 		passed to [bed_subset]
 #' @return the genotypes as an integer matrix of samples X snps,
 #' @export
 #' @md
@@ -13,10 +12,9 @@ bed_genotypes_as_strings <- function(bo, subset = TRUE,
   allele1 = bed_allele1(bo, subset),
   allele2 = bed_allele2(bo, subset),
   sep = '/',
-  sort = TRUE,
-  ...)
+  sort = TRUE)
 {
-  mat <- bed_genotypes(bo, subset = subset, ...)
+  mat <- bed_genotypes(bo, subset = subset)
   strs <- convert_genotypes_to_string(mat, allele1, allele2, sep = sep,
     sort = sort)
 

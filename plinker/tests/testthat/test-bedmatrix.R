@@ -62,5 +62,15 @@ test_that('bed_init_bedmatrix', .bed_init_bedmatrix())
 
   expect_identical(bed_genotypes(bo, sample_idx = 1, snp_idx = 1),
     mat[1, 1, drop = FALSE])
+
+  ### ordering
+  mat2 <- bed_genotypes(bo, snp_idx = 10:5, sample_idx = 20:11)
+  expect_identical(mat2, mat[20:11, 10:5])
+
+  snp_ids <- bed_snp_IDs(bo)
+  sample_ids <- bed_sample_IDs(bo)
+  mat2 <- bed_genotypes(bo, snp_IDs = snp_ids[c(5, 2)],
+    sample_IDs = sample_ids[10:2])
+  expect_identical(mat2, mat[10:2, c(5, 2)])
 }
 test_that('bed_genotypes', .bed_genotypes())

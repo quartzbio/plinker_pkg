@@ -46,5 +46,34 @@ read_plink_freq_counts <- function(path) {
 #  read_plink_output(path, col_types = 'cccciii')
 }
 
+#' reorder if needed a plink output
+#'
+#' useful to apply the ordering of a bed_plink object
+#'
+#' @param df		a PLINK output as a data frame, that has a SNP column
+#' @inheritParams params
+#' @return the reordered output as a data frame
+#' @keywords internal
+reorder_plink_output <- function(df, snp_IDs) {
+  if (!'SNP' %in% names(df)) stop('no SNP column')
+
+  if (length(snp_IDs) == 0) return(df)
+
+  if (!all(df$SNP %in% snp_IDs))  stop('bad SNP ids')
+
+  snp_IDs <- intersect(snp_IDs, df$SNP)
+
+  tt <- table(df$SNP)
+  tt_idx <- match(snp_IDs, names(tt))
+  ids <- rep(snp_IDs, times = tt[tt_idx])
+
+  idx <- match(ids, df$SNP)
+  if (any(is.na(idx))) stop('bad SNP ids')
+#  browser()
+  res <- df[idx, ]
+  rownames(res) <- NULL
+
+  res
+}
 
 

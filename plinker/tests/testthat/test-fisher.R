@@ -21,7 +21,7 @@ context('fisher test')
        quiet = TRUE), 'no non-missing phenotypes')
 
   out <- bed_plink_fisher(bo, quiet = TRUE)
-
+  browser()
   expect_true(nrow(out) == nsnp * 5) # 5 tests are performed for each snp
   expect_identical(colnames(out), c("CHR", "SNP", "A1", "A2", "TEST",
           "AFF", "UNAFF", "P"))
@@ -58,6 +58,12 @@ context('fisher test')
   # pheno has 3 values since the -9 is not identified as the missing phenotype
   expect_error(bed_plink_fisher(bo, pheno, quiet = TRUE),
     'phenotype must be binary')
+
+  ### ordering
+
+  bo2 <- bed_subset(bo, snp_idx = 10:2)
+  out <- bed_plink_fisher(bo2, quiet = TRUE)
+  expect_identical(unique(out$SNP), bed_snp_IDs(bo2))
 }
 test_that('bed_plink_fisher', .bed_plink_fisher())
 
