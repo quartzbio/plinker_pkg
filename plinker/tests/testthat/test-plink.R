@@ -12,7 +12,7 @@ context('plink')
 
   setup_temp_dir()
   save_plink_with_lexicographic_alleles_order(plinker:::fetch_sample_bed(),
-    'toto', quiet = F)
+    'toto', quiet = TRUE)
 
   bo2 <- bed_open('toto')
   b1 <- bed_allele1(bo2)
