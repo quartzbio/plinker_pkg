@@ -17,6 +17,20 @@ context('bim')
 #test_that('read_bim_snpids_by_block', .read_bim_snpids_by_block())
 
 
+.save_bim <- function() {
+  ds <- plinker:::fetch_sample_bed()
+
+  df <- read_bim(plinker:::unprefix_bed(ds)['bim'])
+
+  setup_temp_dir()
+  save_bim(df, 'toto.bim')
+
+  df2 <- read_bim('toto.bim')
+  expect_identical(df2, df)
+}
+test_that('save_bim', .save_bim())
+
+
 
 .read_bim <- function() {
   ds <- plinker:::fetch_sample_bed()
@@ -36,4 +50,5 @@ context('bim')
   expect_true(all(unique(df$A2) %in% c('A', 'C', 'G', 'T')))
 }
 test_that('read_bim', .read_bim())
+
 

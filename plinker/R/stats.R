@@ -1,10 +1,8 @@
 
 #' compute linear regression using with covariates using R
 #'
-#' @inheritParams params
-#' @inheritParams recode_genotypes
-#' @param phenotype a quantitative phenotype/response vector
-#' @param covars		the optional covars, as a data frame
+#' @inheritDotParams bed_plink_cmd -bo -args
+#' @inheritParams bed_plink_lm
 #' @export
 #' @family plink
 
@@ -12,6 +10,7 @@
 bed_R_lm <- function(bo,
   phenotype = bed_fam_df(bo)$PHENO,
   model = c('additive', 'dominant', 'recessive'),
+  logistic = FALSE,
   covars = NULL
 ) {
   nb_snps <- bed_nb_snps(bo)
@@ -26,6 +25,9 @@ bed_R_lm <- function(bo,
   bim <- bim[, c('CHR', 'SNP', 'POS', 'A1')]
   names(bim) <- c('CHR', 'SNP', 'BP', 'A1')
 
+  if (logistic)
+    phenotype <- as.factor(phenotype)
+
   .process_snp <- function(i) {
     genos <- bed_genotypes(bo, snp_idx = i)
 
@@ -39,7 +41,12 @@ bed_R_lm <- function(bo,
       df <- cbind(df, cdf)
     }
 
-    fit <- stats::lm(fo, data = df, model = TRUE)
+    fit <- if (logistic) {
+      stats::glm(fo, data = df, model = TRUE, family = 'binomial')
+    } else {
+      stats::lm(fo, data = df, model = TRUE)
+    }
+
     sm <- summary(fit)
 
     vars <- names(fit$coefficients[-1])
@@ -50,10 +57,17 @@ bed_R_lm <- function(bo,
       stringsAsFactors = FALSE)
 
     res$NMISS <- nrow(fit$model)
+
     # N.B: some vars may be absent from the summary
-    res$BETA <- fit$coefficients[vars]
-    res$STAT <-sm$coefficients[, 't value'][vars]
-    res$P <- sm$coefficients[, 'Pr(>|t|)'][vars]
+    if (logistic) {
+      res$OR <- exp(fit$coefficients[vars])
+      res$STAT <- sm$coefficients[, 'z value'][vars]
+      res$P <- sm$coefficients[, 'Pr(>|z|)'][vars]
+    } else {
+      res$BETA <- fit$coefficients[vars]
+      res$STAT <-sm$coefficients[, 't value'][vars]
+      res$P <- sm$coefficients[, 'Pr(>|t|)'][vars]
+    }
 
     res
   }

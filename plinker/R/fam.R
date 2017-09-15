@@ -7,15 +7,9 @@
 #' @return a data frame
 #' @export
 read_fam <- function(path) {
-  df <- as.data.frame(readr::read_delim(path, ' ',
-    col_names = c('FID', 'IID', 'FATHER_ID', 'MOTHER_ID', 'SEX', 'PHENO'),
-    col_types = 'ccccii',
-    progress = FALSE
-   ))
-
-  attr(df, 'spec') <- NULL
-
-  df
+  utils::read.table(path,
+    col.names = c('FID', 'IID', 'FATHER_ID', 'MOTHER_ID', 'SEX', 'PHENO'),
+    colClasses = c(rep('character', 4), rep('integer', 2)))
 }
 
 

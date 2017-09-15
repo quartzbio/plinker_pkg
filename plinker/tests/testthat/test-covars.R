@@ -46,6 +46,14 @@ test_that('dummify_df_vars', .dummify_df_vars())
 
   expect_error(check_plink_covars(head(fam), fam), 'do not match')
 
+  ### POSITIVE CONTROL
+  df <- fam[, c('FID', 'IID', 'SEX', 'PHENO')]
+  expect_error(check_plink_covars(df, fam), NA)
+
+  # does not rely on rownames
+  rownames(df) <- rev(rownames(fam))
+  expect_error(check_plink_covars(df, fam), NA)
+
   ### constant covars
   covars <- fam[, 1:2]
   covars$COVAR1 <- 1:nrow(covars)

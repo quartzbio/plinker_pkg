@@ -46,3 +46,5 @@ read_plink_freq_counts <- function(path) {
 #  read_plink_output(path, col_types = 'cccciii')
 }
 
+
+
