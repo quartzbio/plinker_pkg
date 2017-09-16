@@ -46,7 +46,37 @@ read_plink_freq_counts <- function(path) {
 #  read_plink_output(path, col_types = 'cccciii')
 }
 
-#' reorder if needed a plink output
+
+
+#' reorder if needed a sample-based plink output
+#'
+#' useful to apply the ordering of a bed_plink object
+#'
+#' @param df		a PLINK output as a data frame, that has FID,IID columns
+#' @inheritParams params
+#' @return the reordered output as a data frame
+#' @keywords internal
+reorder_plink_sample_output <- function(df, sample_IDs, ignore_fid = FALSE) {
+
+  if (!all(c('FID', 'IID') %in% names(df))) stop('missing FID or IID column(s)')
+
+  if (length(sample_IDs) == 0) return(df)
+
+  ids <- compute_sample_IDs(df, ignore_fid)
+  if (!all(ids %in% sample_IDs))  stop('bad sample ids')
+
+  idx <- match(ids, sample_IDs)
+  ord <- order(idx)
+
+  res <- df[ord, ]
+  rownames(res) <- NULL
+
+  res
+}
+
+
+
+#' reorder if needed a SNP-based plink output
 #'
 #' useful to apply the ordering of a bed_plink object
 #'
@@ -54,23 +84,17 @@ read_plink_freq_counts <- function(path) {
 #' @inheritParams params
 #' @return the reordered output as a data frame
 #' @keywords internal
-reorder_plink_output <- function(df, snp_IDs) {
+reorder_plink_snp_output <- function(df, snp_IDs) {
   if (!'SNP' %in% names(df)) stop('no SNP column')
 
   if (length(snp_IDs) == 0) return(df)
 
   if (!all(df$SNP %in% snp_IDs))  stop('bad SNP ids')
 
-  snp_IDs <- intersect(snp_IDs, df$SNP)
+  idx <- match(df$SNP, snp_IDs)
+  ord <- order(idx)
 
-  tt <- table(df$SNP)
-  tt_idx <- match(snp_IDs, names(tt))
-  ids <- rep(snp_IDs, times = tt[tt_idx])
-
-  idx <- match(ids, df$SNP)
-  if (any(is.na(idx))) stop('bad SNP ids')
-#  browser()
-  res <- df[idx, ]
+  res <- df[ord, ]
   rownames(res) <- NULL
 
   res
