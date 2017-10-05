@@ -291,7 +291,11 @@ infer_nb_snps <- function(bed, nb_samples) {
 }
 
 
-
+#' generate a named vector of the 3 PLINK filenames for a dataset prefix
+#'
+#' @param prefix		the PLINK dataset prefix
+#' @return the filenames as a named vector
+#' @export
 unprefix_bed <- function(prefix) {
   types <- c('bed', 'bim', 'fam')
   fns <- paste0(prefix, '.', types)
