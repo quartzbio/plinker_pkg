@@ -63,6 +63,22 @@ context('fisher test')
   bo2 <- bed_subset(bo, snp_idx = 10:2)
   out <- bed_plink_fisher(bo2, quiet = TRUE)
   expect_identical(unique(out$SNP), bed_snp_IDs(bo2))
+
+  ### allele order: inversed OR, opposite stat, same pvalue
+  ### PB: bug in PLINK, lots of NA
+  res1 <- bed_plink_fisher(bo, quiet = TRUE)
+  res2 <- bed_plink_fisher(bo, quiet = TRUE, lexicographic_allele_order = TRUE)
+
+  # non swapped
+  expect_identical(res2[1:5, ], res1[1:5, ])
+  # swapped
+  df1 <- res1[6:10, ]
+  df2 <- res2[6:10, ]
+  expect_false(any(df1$AFF == df2$AFF))
+  expect_false(any(df1$UNAFF == df2$UNAFF))
+  expect_equal(df2$P[1:3], df1$P[1:3], tolerance = 1e-4)
+  # recessive and dominant are reversed
+  expect_equal(df2$P[4:5], df1$P[5:4], tolerance = 1e-4)
 }
 test_that('bed_plink_fisher', .bed_plink_fisher())
 
