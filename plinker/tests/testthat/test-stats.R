@@ -53,6 +53,16 @@ context('R stats')
   covars <- bed_make_covars(bo1, covars)
   res3 <- bed_R_lm(bo1, covars = covars)
   expect_identical(res3, res2)
+
+  ### lexicographic_allele_order: negate BETA and STAT
+  res1 <- bed_R_lm(bo)
+  res2 <- bed_R_lm(bo, lexicographic_allele_order = TRUE)
+
+  expect_identical(res1[1, ], res2[1, ])
+  expect_false(res1$A1[2] == res2$A1[2])
+  expect_equal(res2$P[2], res1$P[2])
+  expect_equal(res2$BETA[2], -res1$BETA[2])
+  expect_equal(res2$STAT[2], -res1$STAT[2])
 }
 test_that('bed_R_lm', .bed_R_lm())
 

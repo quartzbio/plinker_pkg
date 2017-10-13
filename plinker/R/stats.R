@@ -3,6 +3,7 @@
 #'
 #' @inheritDotParams bed_plink_cmd -bo -args
 #' @inheritParams bed_plink_lm
+#' @inheritParams bed_genotypes
 #' @export
 #' @family plink
 
@@ -11,7 +12,8 @@ bed_R_lm <- function(bo,
   phenotype = bed_fam_df(bo)$PHENO,
   model = c('additive', 'dominant', 'recessive'),
   logistic = FALSE,
-  covars = NULL
+  covars = NULL,
+  lexicographic_allele_order = FALSE
 ) {
   nb_snps <- bed_nb_snps(bo)
   model <- match.arg(model)
@@ -25,11 +27,19 @@ bed_R_lm <- function(bo,
   bim <- bim[, c('CHR', 'SNP', 'POS', 'A1')]
   names(bim) <- c('CHR', 'SNP', 'BP', 'A1')
 
+  if (lexicographic_allele_order) {
+    a2h <- bed_allele_higher(bo)
+    a2 <- bed_allele2(bo)
+    inv <- which(a2h != a2)
+    bim$A1[inv] <- a2[inv]
+  }
+
   if (logistic)
     phenotype <- as.factor(phenotype)
 
   .process_snp <- function(i) {
-    genos <- bed_genotypes(bed_subset(bo, snp_idx = i))
+    genos <- bed_genotypes(bed_subset(bo, snp_idx = i),
+      lexicographic_allele_order = lexicographic_allele_order)
 
     X <- as.numeric(recode_genotypes(genos, model))
     df <- data.frame(phenotype, X, stringsAsFactors = FALSE)
@@ -83,6 +93,7 @@ bed_R_lm <- function(bo,
 #' currently only compute the genotypic fisher test
 #'
 #' @inheritParams params
+#' @inheritParams bed_genotypes
 #' @param phenotype		a binary phenotype vector as an integer vector
 #' 	Case/control phenotypes are expected to be encoded as:
 #'   - 1=unaffected (control)
@@ -90,14 +101,25 @@ bed_R_lm <- function(bo,
 #' @export
 #' @family stats
 #' @seealso bed_phenotype_from_df
-bed_R_fisher <- function(bo, phenotype = bed_fam_df(bo)$PHENO) {
+bed_R_fisher <- function(bo, phenotype = bed_fam_df(bo)$PHENO,
+  lexicographic_allele_order = FALSE)
+{
   nb_snps <- bed_nb_snps(bo)
 
   bim <- bed_bim_df(bo)
   bim <- bim[, c('CHR', 'SNP', 'A1', 'A2')]
 
+  if (lexicographic_allele_order) {
+    a2h <- bed_allele_higher(bo)
+    a2 <- bed_allele2(bo)
+    inv <- which(a2h != a2)
+    bim$A1[inv] <- a2[inv]
+    bim$A2[inv] <- a2h[inv]
+  }
+
   .process_snp <- function(i) {
-    genos <- bed_genotypes(bed_subset(bo, snp_idx = i))
+    genos <- bed_genotypes(bed_subset(bo, snp_idx = i),
+      lexicographic_allele_order = lexicographic_allele_order)
     genos <- factor(genos, levels = 0:2)
 
     tt <- table(genos, phenotype)

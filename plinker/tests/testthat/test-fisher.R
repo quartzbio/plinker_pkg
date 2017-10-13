@@ -68,6 +68,11 @@ context('fisher test')
   ### PB: bug in PLINK, lots of NA
   res1 <- bed_plink_fisher(bo, quiet = TRUE)
   res2 <- bed_plink_fisher(bo, quiet = TRUE, lexicographic_allele_order = TRUE)
+  res3 <- bed_R_fisher(bo, lexicographic_allele_order = TRUE)
+
+  res2geno <- res2[res2$TEST == 'GENO', ]
+  rownames(res2geno) <- NULL
+  expect_equal(res2geno, res3, tolerance = 1e-4)
 
   # non swapped
   expect_identical(res2[1:5, ], res1[1:5, ])
