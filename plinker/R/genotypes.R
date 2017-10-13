@@ -7,12 +7,10 @@
 #' 	if FALSE, no other params must be given
 #' @return the genotypes as an integer matrix of samples X snps,
 #' @export
-bed_genotypes_as_strings <- function(bo, subset = TRUE,
-  allele1 = bed_allele1(bo, subset),
-  allele2 = bed_allele2(bo, subset),
-  sep = '/',
-  sort = TRUE)
+bed_genotypes_as_strings <- function(bo, subset = TRUE, sep = '/', sort = TRUE)
 {
+  allele1 <- bed_allele1(bo, subset)
+  allele2 <- bed_allele2(bo, subset)
   mat <- bed_genotypes(bo, subset = subset)
   strs <- convert_genotypes_to_string(mat, allele1, allele2, sep = sep,
     sort = sort)
