@@ -53,6 +53,9 @@ test_that('new_bed', .new_bed())
   expect_identical(bed_allele1(bo), bim$A1)
   expect_identical(bed_allele2(bo), bim$A2)
 
+  expect_identical(bed_allele_higher(bo), pmax(bim$A2, bim$A1))
+
+
   bo2 <- bed_subset(bo, snp_idx = 1)
   expect_identical(bed_allele1(bo2), bim$A1[1])
   expect_identical(bed_allele2(bo2), bim$A2[1])

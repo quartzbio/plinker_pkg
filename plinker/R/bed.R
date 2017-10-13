@@ -179,6 +179,22 @@ bed_allele2 <- function(bo, subset = TRUE) {
   bed_bim_df(bo, subset)$A2
 }
 
+#' get the lexicographically higher allele
+#'
+#' for example:
+#'   - C,G -> G
+#'   - G,C -> G
+#'   - A,T -> T
+#'
+#' @inheritParams params
+#' @return the higher alleles as a character vector
+#' @family accessors
+#' @export
+bed_allele_higher <- function(bo, subset = TRUE) {
+  with(bed_bim_df(bo, subset = subset), pmax(A1, A2))
+}
+
+
 #' get the current subset of samples as ids
 #'
 #' @inheritParams params
