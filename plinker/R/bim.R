@@ -28,11 +28,6 @@ read_bim <- function(path) {
 #' @export
 #' @seealso read_bim
 save_bim <- function(bim_df, path) {
-  df <- data.table::fwrite(bim_df, path,
-    sep = '\t',
-    col.names = FALSE,
-    verbose = FALSE,
-    quote = FALSE,
-    showProgress = FALSE
-  )
+  df <- readr::write_tsv(bim_df, path,
+    col_names = FALSE)
 }
