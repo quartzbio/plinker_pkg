@@ -45,17 +45,30 @@ bed_genotypes <- function(bo, subset = TRUE, lexicographic_allele_order = FALSE)
   snp_idx <- bed_snp_idx(bo)
   sample_idx <- bed_sample_idx(bo)
 
-  if (!subset || (is.null(snp_idx) && is.null(sample_idx)))
-    # N.B: the empty [] calls BedMatrix method
-    return(bmat[,, drop = FALSE])
 
-  if (is.null(snp_idx)) {
-    bmat[sample_idx, , drop = FALSE]
-  } else if (is.null(sample_idx)) {
-    bmat[, snp_idx, drop = FALSE]
+  genos <- NULL
+  if (!subset || (is.null(snp_idx) && is.null(sample_idx))) {
+    # N.B: the empty [] calls BedMatrix method
+    genos <- bmat[,, drop = FALSE]
   } else {
-    bmat[sample_idx, snp_idx, drop = FALSE]
+    genos <- if (is.null(snp_idx)) {
+      bmat[sample_idx, , drop = FALSE]
+    } else if (is.null(sample_idx)) {
+      bmat[, snp_idx, drop = FALSE]
+    } else {
+      bmat[sample_idx, snp_idx, drop = FALSE]
+    }
   }
+
+  if (lexicographic_allele_order) {
+    a2h <- bed_allele_higher(bo, subset = subset)
+    a2 <- bed_allele2(bo, subset = subset)
+    inv <- which(a2h != a2)
+
+    genos[, inv] <- 2L - genos[, inv]
+  }
+
+  genos
 }
 
 

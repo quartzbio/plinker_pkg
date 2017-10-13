@@ -68,5 +68,20 @@ test_that('bed_init_bedmatrix', .bed_init_bedmatrix())
   mat2 <- bed_genotypes(bed_subset(bo, snp_IDs = snp_ids[c(5, 2)],
     sample_IDs = sample_ids[10:2]))
   expect_identical(mat2, mat[10:2, c(5, 2)])
+
+  ### lexicographic_allele_order
+  mat <- bed_genotypes(bo)
+  mat2 <- bed_genotypes(bo, lexicographic_allele_order = TRUE)
+  inv <- which(bed_allele2(bo) != bed_allele_higher(bo))
+  expect_identical(mat2[, -inv], mat[, -inv])
+  expect_identical(2L - mat2[, inv], mat[, inv])
+
+  # with a subset
+  bo2 <- bed_subset(bo, snp_idx = 5:10, sample_idx = 11:20)
+  mat <- bed_genotypes(bo2)
+  mat2 <- bed_genotypes(bo2, lexicographic_allele_order = TRUE)
+  inv <- which(bed_allele2(bo2) != bed_allele_higher(bo2))
+  expect_identical(mat2[, -inv], mat[, -inv])
+  expect_identical(2L - mat2[, inv], mat[, inv])
 }
 test_that('bed_genotypes', .bed_genotypes())
