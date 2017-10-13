@@ -31,27 +31,22 @@ bed_init_bedmatrix <- function(bo) {
 #'
 #' @inheritParams params
 #' @param subset	whether to consider subset info from the bo object.
-#' 	if FALSE, no other params must be given
-#' @param ... 		passed to [bed_subset]
+#' @param lexicographic_allele_order
+#' 								whether to use lexicographic order for alleles, and thus
+#' 								to recode genotypes accordingly
 #' @return the genotypes as an integer matrix of samples X snps,
 #' @export
 #' @md
-bed_genotypes <- function(bo, subset = TRUE, ...) {
+bed_genotypes <- function(bo, subset = TRUE, lexicographic_allele_order = FALSE) {
   bmat <- bo$cache$bedmatrix
   if (is.null(bmat))
     bmat <- bo$cache$bedmatrix <- bed_init_bedmatrix(bo)
-
-  dots <- list(...)
-  if (!subset && length(dots) > 0)
-    stop('Error, when subset=FALSE, no other param can be given')
-
-  if (length(dots) > 0)
-    bo <- bed_subset(bo, ...)
 
   snp_idx <- bed_snp_idx(bo)
   sample_idx <- bed_sample_idx(bo)
 
   if (!subset || (is.null(snp_idx) && is.null(sample_idx)))
+    # N.B: the empty [] calls BedMatrix method
     return(bmat[,, drop = FALSE])
 
   if (is.null(snp_idx)) {

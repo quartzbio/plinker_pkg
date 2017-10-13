@@ -29,7 +29,7 @@ bed_R_lm <- function(bo,
     phenotype <- as.factor(phenotype)
 
   .process_snp <- function(i) {
-    genos <- bed_genotypes(bo, snp_idx = i)
+    genos <- bed_genotypes(bed_subset(bo, snp_idx = i))
 
     X <- as.numeric(recode_genotypes(genos, model))
     df <- data.frame(phenotype, X, stringsAsFactors = FALSE)
@@ -97,7 +97,7 @@ bed_R_fisher <- function(bo, phenotype = bed_fam_df(bo)$PHENO) {
   bim <- bim[, c('CHR', 'SNP', 'A1', 'A2')]
 
   .process_snp <- function(i) {
-    genos <- bed_genotypes(bo, snp_idx = i)
+    genos <- bed_genotypes(bed_subset(bo, snp_idx = i))
     genos <- factor(genos, levels = 0:2)
 
     tt <- table(genos, phenotype)

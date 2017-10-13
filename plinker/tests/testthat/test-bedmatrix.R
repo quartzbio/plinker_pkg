@@ -17,10 +17,6 @@ test_that('bed_init_bedmatrix', .bed_init_bedmatrix())
 .bed_genotypes <- function() {
   bo <- bed_open(plinker:::fetch_sample_bed())
 
-  #### edge cases
-  expect_error(bed_genotypes(bo, subset = FALSE, snp_ids = 1),
-    'no other param can be given')
-
   ####################################
   mat <- bed_genotypes(bo)
   expect_is(mat, 'matrix')
@@ -48,29 +44,29 @@ test_that('bed_init_bedmatrix', .bed_init_bedmatrix())
   expect_identical(df2, df)
 
   ############################################
-  mat2 <- bed_genotypes(bo, sample_idx = 11:20)
+  mat2 <- bed_genotypes(bed_subset(bo, sample_idx = 11:20))
   expect_identical(mat2, mat[11:20, ])
 
-  mat2 <- bed_genotypes(bo, snp_idx = 5:10)
+  mat2 <- bed_genotypes(bed_subset(bo, snp_idx = 5:10))
   expect_identical(mat2, mat[, 5:10])
 
-  mat2 <- bed_genotypes(bo, snp_idx = 5:10, sample_idx = 11:20)
+  mat2 <- bed_genotypes(bed_subset(bo, snp_idx = 5:10, sample_idx = 11:20))
   expect_identical(mat2, mat[11:20, 5:10])
 
-  bo2 <- bed_subset(bo, snp_idx = 5:10, sample_idx = 11:20)
+  bo2 <- bed_subset(bed_subset(bo, snp_idx = 5:10, sample_idx = 11:20))
   expect_identical(bed_genotypes(bo2), mat[11:20, 5:10])
 
-  expect_identical(bed_genotypes(bo, sample_idx = 1, snp_idx = 1),
+  expect_identical(bed_genotypes(bed_subset(bo, sample_idx = 1, snp_idx = 1)),
     mat[1, 1, drop = FALSE])
 
   ### ordering
-  mat2 <- bed_genotypes(bo, snp_idx = 10:5, sample_idx = 20:11)
+  mat2 <- bed_genotypes(bed_subset(bo, snp_idx = 10:5, sample_idx = 20:11))
   expect_identical(mat2, mat[20:11, 10:5])
 
   snp_ids <- bed_snp_IDs(bo)
   sample_ids <- bed_sample_IDs(bo)
-  mat2 <- bed_genotypes(bo, snp_IDs = snp_ids[c(5, 2)],
-    sample_IDs = sample_ids[10:2])
+  mat2 <- bed_genotypes(bed_subset(bo, snp_IDs = snp_ids[c(5, 2)],
+    sample_IDs = sample_ids[10:2]))
   expect_identical(mat2, mat[10:2, c(5, 2)])
 }
 test_that('bed_genotypes', .bed_genotypes())
