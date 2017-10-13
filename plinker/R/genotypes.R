@@ -7,7 +7,6 @@
 #' 	if FALSE, no other params must be given
 #' @return the genotypes as an integer matrix of samples X snps,
 #' @export
-#' @md
 bed_genotypes_as_strings <- function(bo, subset = TRUE,
   allele1 = bed_allele1(bo, subset),
   allele2 = bed_allele2(bo, subset),
