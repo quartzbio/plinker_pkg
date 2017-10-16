@@ -124,35 +124,3 @@ test_that('infer_nb_snps', .infer_nb_snps())
 }
 test_that('bed_sample_IDs', .bed_sample_IDs())
 
-
-
-.bed_subset <- function() {
-  bo <- bed_open(plinker:::fetch_sample_bed())
-
-  snp_ids <- bed_bim_df(bo)$SNP
-  sample_ids <- bed_sample_IDs(bo)
-
-  ### edge cases
-  expect_error(bed_subset(bo, snp_IDs = snp_ids, snp_idx = 1),
-    "incompatible parameters")
-  expect_error(bed_subset(bo, sample_IDs = sample_ids, sample_idx = 1),
-    "incompatible parameters")
-
-  expect_identical(bed_subset(bo, snp_IDs = snp_ids[10:15]),
-    bed_subset_snps_by_IDs(bo, snp_ids[10:15]))
-  expect_identical(bed_subset(bo, snp_idx = 3),
-    bed_subset_snps_by_idx(bo, 3))
-  expect_identical(bed_subset(bo, sample_IDs = sample_ids[10:15]),
-    bed_subset_samples_by_IDs(bo, sample_ids[10:15]))
-  expect_identical(bed_subset(bo, sample_idx = 3),
-    bed_subset_samples_by_idx(bo, 3))
-
-  bo2 <- bed_subset(bo, snp_idx = 3:9, sample_IDs = sample_ids[10:15])
-  expect_identical(bed_snp_idx(bo2), 3:9)
-  expect_identical(bed_sample_idx(bo2), 10:15)
-
-  bo3 <- bed_subset(bo2, snp_IDs = snp_ids[5:6], sample_idx = 4:2)
-  expect_identical(bed_snp_idx(bo3), 5:6)
-  expect_identical(bed_sample_idx(bo3), (10:15)[4:2])
-}
-test_that('bed_subset', .bed_subset())

@@ -20,9 +20,8 @@ test('plinker', '^plink$')
 test('plinker', 'plink_lm')
 test('plinker', 'plink_output')
 test('plinker', 'sample_data')
-test('plinker', 'sample_subset')
-test('plinker', 'snp_subset')
 test('plinker', 'stats')
+test('plinker', 'subset')
 test('plinker', 'utils')
 
 help2 <- function(..., help_type = 'html') {
