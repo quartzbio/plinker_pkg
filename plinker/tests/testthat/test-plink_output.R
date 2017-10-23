@@ -54,6 +54,28 @@ test_that('reorder_plink_sample_output', .reorder_plink_sample_output())
 
 
 
+.annotate_plink_sample_output <- function() {
+  bo <- bed_open(plinker:::fetch_sample_bed())
+  ignore_fid = bed_ignore_fid(bo)
+  annotate_plink_sample_output <- plinker:::annotate_plink_sample_output
+
+  fam <- bed_fam_df(bo)
+  ids <- bed_sample_IDs(bo)
+
+  df <- fam[nrow(fam):1, ]
+  annot <- fam[, 1:2]
+  annot$SUBJID <- as.character(1:nrow(fam))
+  annot$EXTRA <- 'useless'
+
+  df2 <- annotate_plink_sample_output(df, annot, 'SUBJID')
+  expect_equal(as.integer(df2$SUBJID), 89:1)
+
+  expect_equivalent(df2[, -1], df[, -(1:2)])
+}
+test_that('annotate_plink_sample_output', .annotate_plink_sample_output())
+
+
+
 .reorder_plink_snp_output <- function() {
   bo <- bed_open(plinker:::fetch_sample_bed())
   reorder_plink_snp_output <- plinker:::reorder_plink_snp_output

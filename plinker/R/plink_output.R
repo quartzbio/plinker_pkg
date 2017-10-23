@@ -74,6 +74,27 @@ reorder_plink_sample_output <- function(df, sample_IDs, ignore_fid = FALSE) {
   res
 }
 
+#' substitute the FAM ids (FID, IID) by other vars in a PLINK-like sample output
+#'
+#' @param df			a PLINK output as a data frame, that has FID,IID columns
+#' @param annot	  a data frame with FID,IID and "id" columns
+#' @inheritParams params
+#' @return a merged data frame without the FID/IID columns, but the "id" column
+#' 	instead
+#' @keywords internal
+annotate_plink_sample_output <- function(df, annot, id) {
+  if (length(id) != 1 || ! id %in% names(annot))
+    stop('bad param id')
+
+  df2 <- merge_df_with_fam(df, annot)
+
+  # reorder cols
+  extra_cols <- setdiff(names(annot), id)
+  newcols <- c(id, setdiff(names(df2), names(annot)))
+  df2 <- df2[, newcols, drop = FALSE]
+
+  df2
+}
 
 
 #' reorder if needed a SNP-based plink output
