@@ -2,6 +2,8 @@ context('convert')
 
 .bed_convert_genotypes_to_data_frame <- function() {
   recode_genotypes <- plinker:::recode_genotypes
+  bed_convert_genotypes_to_data_frame <-
+    plinker:::bed_convert_genotypes_to_data_frame
 
   bo <- bed_open(plinker:::fetch_sample_bed())
 
