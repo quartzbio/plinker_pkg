@@ -11,7 +11,6 @@
 #' @param df		the sample annotations
 #' @param id		an optional name of a column in df that is to be used in further
 #' 		output as main secondary sample ID. Its values must be character and unique
-#' @inheritDotParams merge_df_with_fam -fam
 #' @return the annotated plinker_bed object
 #' @export
 bed_set_sample_annot <- function(bo, df, id = NULL, ...) {
