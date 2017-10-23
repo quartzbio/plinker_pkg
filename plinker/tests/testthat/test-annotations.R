@@ -1,5 +1,52 @@
 context('annotations')
 
+
+
+.bed_set_snp_annot <- function() {
+  bo <- bed_open(plinker:::fetch_sample_bed())
+
+  expect_null(bed_get_snp_annot(bo))
+
+  bim <- bed_bim_df(bo)
+  ids <- bed_snp_IDs(bo)
+
+  annot <- data.frame(
+    SNP = rev(ids),
+    ID = paste0('ID_', rev(ids)),
+    POS = 1,
+    stringsAsFactors = FALSE)
+
+  expect_error(bed_set_snp_annot(bo, annot[, -1]), 'no SNP column')
+  expect_error(bed_set_snp_annot(bo, annot[-1, ]), 'non exhaustive annotations')
+  expect_error(bed_set_snp_annot(bo, rbind(annot, annot)),
+     'duplicated values in SNP column')
+
+  bo2 <- bed_set_snp_annot(bo, annot)
+
+  annot2 <- bed_get_snp_annot(bo2)
+  expect_equivalent(annot2[nrow(annot2):1, ], annot)
+
+
+  ##### with secondary id -- -id=
+  expect_error(bed_set_snp_annot(bo, annot, id = 'NOT'), 'bad column name')
+  annot2 <- annot
+  annot2$NUM <- nchar(annot2$ID)
+  expect_error(bed_set_snp_annot(bo, annot2, id = 'NUM'), 'character')
+  annot2$STR <- as.character(annot2$NUM)
+  expect_warning(bed_set_snp_annot(bo, annot2, id = 'STR'), 'duplicated')
+
+  bo2 <- bed_set_snp_annot(bo, annot, id = 'ID')
+  bo3 <- bed_set_snp_annot(bo, annot)
+  expect_identical(bed_get_snp_annot_id(bo2), 'ID')
+  expect_null(bed_get_snp_annot_id(bo3))
+
+  expect_identical(bed_get_snp_annot(bo3), bed_get_snp_annot(bo2))
+}
+test_that('bed_set_snp_annot', .bed_set_snp_annot())
+
+
+
+
 .bed_set_get_sample_annot <- function() {
   bo <- bed_open(plinker:::fetch_sample_bed())
 

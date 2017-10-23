@@ -112,15 +112,25 @@ print.plinker_bed <- function(x, ...) {
 
   # sample_annotations
   annot <- bed_get_sample_annot(x)
-
   if (!is.null(annot)) {
-    line <- 'sample annotations: '
     id <- bed_get_sample_annot_id(x)
     if (!is.null(id))
       id <- sprintf('custom ID="%s", ', id)
     else id <- ''
 
     line <- sprintf('sample annotations: %s%i var(s)\n', id, ncol(annot))
+    cat(line)
+  }
+
+  # snp annotations
+  annot <- bed_get_snp_annot(x)
+  if (!is.null(annot)) {
+    id <- bed_get_snp_annot_id(x)
+    if (!is.null(id))
+      id <- sprintf('custom ID="%s", ', id)
+    else id <- ''
+
+    line <- sprintf('SNP annotations: %s%i var(s)\n', id, ncol(annot))
     cat(line)
   }
 

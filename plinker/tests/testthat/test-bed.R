@@ -85,6 +85,22 @@ test_that('accessors', .accessors())
 
   bo2 <- bed_set_sample_annot(bo, df)
   expect_output(print(bo2), 'sample annotations: 1 var(s)', fixed = TRUE)
+
+  ### snp annot
+  bim <- bed_bim_df(bo)
+  ids <- bed_snp_IDs(bo)
+
+  annot <- data.frame(
+    SNP = rev(ids),
+    ID = paste0('ID_', rev(ids)),
+    POS = 1,
+    stringsAsFactors = FALSE)
+
+  bo2 <- bed_set_snp_annot(bo, annot)
+  expect_output(print(bo2), 'SNP annotations: 3 var(s)', fixed = TRUE)
+
+  bo2 <- bed_set_snp_annot(bo, annot, 'ID')
+  expect_output(print(bo2), 'SNP annotations: custom ID="ID", 3 var(s)', fixed = TRUE)
 }
 test_that('print.plinker_bed', .print.plinker_bed())
 
