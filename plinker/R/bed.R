@@ -110,6 +110,20 @@ print.plinker_bed <- function(x, ...) {
   line <- paste0('sample IDs: ', sids, '\n')
   cat(line)
 
+  # sample_annotations
+  annot <- bed_get_sample_annot(x)
+
+  if (!is.null(annot)) {
+    line <- 'sample annotations: '
+    id <- bed_get_sample_annot_id(x)
+    if (!is.null(id))
+      id <- sprintf('custom ID="%s", ', id)
+    else id <- ''
+
+    line <- sprintf('sample annotations: %s%i var(s)\n', id, ncol(annot))
+    cat(line)
+  }
+
   cat('---\n')
   paths <- x[c('bed', 'bim', 'fam')]
   cat(sprintf('%s:%s', names(paths), paths), sep = '\n')

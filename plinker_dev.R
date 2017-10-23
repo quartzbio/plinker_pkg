@@ -3,6 +3,7 @@ library(devtools)
 check_man('plinker')
 
 test('plinker')
+test('plinker', 'annotations')
 test('plinker', 'bed$')
 test('plinker', 'bed_plink$')
 test('plinker', 'bed_plink_lm')

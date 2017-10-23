@@ -73,6 +73,18 @@ test_that('accessors', .accessors())
 
   df <- bed_bim_df(bo) # trigger the bim_df in cache
   expect_output(print(bo), 'Loaded')
+
+  ### sample_annot
+  ids <- bed_sample_IDs(bo)
+  df <- data.frame(MERGE_ID = rev(ids), SUBJID = as.character(seq_along(ids)),
+    stringsAsFactors = FALSE)
+
+  bo2 <- bed_set_sample_annot(bo, df, id = 'SUBJID')
+  expect_output(print(bo2), 'sample annotations: custom ID="SUBJID", 1 var(s)',
+    fixed = TRUE)
+
+  bo2 <- bed_set_sample_annot(bo, df)
+  expect_output(print(bo2), 'sample annotations: 1 var(s)', fixed = TRUE)
 }
 test_that('print.plinker_bed', .print.plinker_bed())
 
