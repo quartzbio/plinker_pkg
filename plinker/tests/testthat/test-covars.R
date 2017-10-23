@@ -105,9 +105,9 @@ test_that('check_plink_covars', .check_plink_covars())
   ##### test 2 - id var
   covars$MYID <- covars$SUBJID
   covars$SUBJID <- NULL
-  expect_error(bed_make_covars(bo, covars), 'bad "id_var"')
+  expect_error(bed_make_covars(bo, covars, 'SUBJID'), 'bad "merge_id"')
 
-  df2 <- bed_make_covars(bo, covars, id_var = 'MYID')
+  df2 <- bed_make_covars(bo, covars, merge_id = 'MYID')
   expect_identical(df2, df)
 
   ##### test 3 - FID, IID

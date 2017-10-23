@@ -52,8 +52,8 @@ compute_sample_IDs <- function(fam_df, ignore_fid) {
 #' a "left-join" style merge is performed on the FAM data frame.
 #' The merge is performed:
 #'   - either by (FID,IID) if present in df
-#'   - or by sample_IDs versus id_var. in that case the id_var column
-#'     is removed from the merged data frame
+#'   - or by sample_IDs versus merge_id. in that case the merge_id column
+#'     is by default removed from the merged data frame
 #'
 #' N.B: the sample_IDs are computed from fam_df using ignore_fid
 #'
@@ -66,13 +66,18 @@ compute_sample_IDs <- function(fam_df, ignore_fid) {
 #'
 #' @param fam_df			the .fam data.frame, as returned by [read_fam()]. Not checked.
 #' @param df					the data frame to merge
-#' @param id_var			the df variable to use for the merge if (FID,IID) is not present
-#' 										in df
+#' @param merge_id		the df variable to use for the merge if (FID,IID) is not present
+#' 										in df. Defaults to first column.
+#' @param rm_merge_id		whether to remove the merge_id (if used) after the merge
 #' @param ignore_fid	whether to ignore the .fam FID variable to compute the fam IDs
 #' 										(cf [compute_sample_IDs()])
 #' @return the merged data frame
 #' @export
-merge_df_with_fam <- function(fam_df, df, id_var = 'SUBJID', ignore_fid = FALSE) {
+merge_df_with_fam <- function(fam_df, df,
+  merge_id = colnames(df)[1],
+  rm_merge_id = TRUE,
+  ignore_fid = FALSE)
+{
   cols <- c('FID', 'IID')
   to_remove <- NULL
   by.x <- by.y <- NULL
@@ -80,11 +85,14 @@ merge_df_with_fam <- function(fam_df, df, id_var = 'SUBJID', ignore_fid = FALSE)
   if (all(cols %in% names(df))) {
     by.x <- by.y <- cols
   } else {
-    if (!id_var %in% names(df)) stop('error, bad "id_var"')
+    if (!merge_id %in% names(df)) stop('error, bad "merge_id"')
 
-    fam_df[[id_var]] <- compute_sample_IDs(fam_df, ignore_fid)
+    fam_df[[merge_id]] <- compute_sample_IDs(fam_df, ignore_fid)
 
-    to_remove <- by.x <- by.y <- id_var
+    by.x <- by.y <- merge_id
+
+    if (rm_merge_id)
+      to_remove <- merge_id
   }
 
   res <- merge(fam_df, df, by.x = by.x, by.y = by.y,

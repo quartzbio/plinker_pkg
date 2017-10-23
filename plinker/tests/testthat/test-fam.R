@@ -64,15 +64,26 @@ test_that('save_fam', .save_fam())
   df <- rbind(fam_df[1,], fam_df)
   expect_error(merge_df_with_fam(fam_df, df), 'bad merge')
 
+  # rm_merge_id
+  df <- fam_df
+  df$NB <- 1:nrow(df)
+  mdf1 <- merge_df_with_fam(fam_df, df, rm_merge_id = TRUE)
+  mdf2 <- merge_df_with_fam(fam_df, df, rm_merge_id = FALSE)
+  # merge_id not used for merging
+  expect_identical(mdf1, mdf2)
+
+
   ############ by single ID ##################
   ## ignore_fid = FALSE
   ids <- bed_sample_IDs(bo, ignore_fid = FALSE)
 
   df <- data.frame(MYID = rev(ids), VALUE = seq_along(ids),
     stringsAsFactors = FALSE)
-  expect_error(merge_df_with_fam(fam_df, df, ignore_fid = FALSE),
-    'error, bad "id_var"')
-  expect_error(merge_df_with_fam(fam_df, df, id_var = 'MYID',ignore_fid = FALSE),
+  expect_error(merge_df_with_fam(fam_df, df, merge_id = 'SUBJID', ignore_fid = FALSE),
+    'error, bad "merge_id"')
+  expect_error(merge_df_with_fam(fam_df, df, merge_id = 'MYID',ignore_fid = FALSE),
+    NA)
+  expect_error(merge_df_with_fam(fam_df, df,ignore_fid = FALSE),
     NA)
 
 
@@ -83,6 +94,12 @@ test_that('save_fam', .save_fam())
 
   expect_identical(mdf[, -7], fam_df)
   expect_identical(mdf$VALUE, rev(seq_along(ids)))
+
+  # rm_merge_id
+  mdf2 <- merge_df_with_fam(fam_df, df, ignore_fid = FALSE, rm_merge_id = FALSE)
+  expect_identical(mdf2$SUBJID, ids)
+  mdf2$SUBJID <- NULL
+  expect_identical(mdf2, mdf)
 
   # subset
   expect_error(merge_df_with_fam(fam_df,  df[1:10, ],
@@ -104,8 +121,8 @@ test_that('save_fam', .save_fam())
   df <- data.frame(SUBJID = rev(ids), VALUE = seq_along(ids),
     stringsAsFactors = FALSE)
 
-  expect_error(merge_df_with_fam(fam_df, df, id_var = 'MYID', ignore_fid = TRUE),
-    'error, bad "id_var"')
+  expect_error(merge_df_with_fam(fam_df, df, merge_id = 'MYID', ignore_fid = TRUE),
+    'error, bad "merge_id"')
 
   mdf <- merge_df_with_fam(fam_df, df, ignore_fid = TRUE)
   expect_identical(mdf[, -7], fam_df)

@@ -15,7 +15,7 @@ context('phenotype')
     stringsAsFactors = FALSE)
 
   df[nb:10, 'VALUE'] <- NA
-  pheno <- bed_phenotype_from_df(bo, df, 'VALUE', id_var = 'SUBJID')
+  pheno <- bed_phenotype_from_df(bo, df, 'VALUE', merge_id = 'SUBJID')
   expect_identical(pheno, rev(df$VALUE))
 }
 test_that('bed_phenotype_from_df', .bed_phenotype_from_df())
