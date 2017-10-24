@@ -8,12 +8,8 @@ before_script:
   - echo "options(crayon.enabled=TRUE)" > .Rprofile
 
 test:
-  coverage: '/Coverage: (\d+.?\d*)/'
+  #coverage: '/Coverage: (\d+.?\d*)/'
   script:
-    - make test
+    - #make check
     - make coverage
     
-check:
-  script:
-    - make check
-
