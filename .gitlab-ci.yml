@@ -7,11 +7,17 @@ variables:
 before_script:
   - echo "options(crayon.enabled=TRUE)" > .Rprofile
 
-test:
-  #coverage: '/Coverage: (\d+.?\d*)/'
+coverage:
+  coverage: '/Coverage: (\d+.?\d*)/'
   script:
     #- make check
     # N.B: colors fool the coverage regexp
     - echo "options(crayon.enabled=FALSE)" > .Rprofile
     - make coverage
+
+check:
+  script:
+    #- make check
+    # N.B: colors fool the coverage regexp
+    - echo "options(crayon.enabled=FALSE)" > .Rprofile
     
