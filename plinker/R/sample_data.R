@@ -1,7 +1,7 @@
-get_extdata_dir <- function() {
+get_extdata_dir <- function(debug = FALSE) {
   ### do not use devtools shimmed system.file
   dir <- base::system.file("extdata", package = 'plinker')
-  if (identical(dir, '')) {
+  if (debug || identical(dir, '')) {
     dir <- base::system.file("inst", "extdata", package = 'plinker')
     stopifnot(nzchar(dir))
   }
