@@ -10,6 +10,6 @@ before_script:
 test:
   #coverage: '/Coverage: (\d+.?\d*)/'
   script:
-    - #make check
+    #- make check
     - make coverage
     
