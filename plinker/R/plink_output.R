@@ -96,6 +96,35 @@ annotate_plink_sample_output <- function(df, annot, id) {
   df2
 }
 
+#' add the a annotaion id to a PLINK-like snp output
+#'
+#' @param df				a PLINK output as a data frame, that has a SNP column
+#' @param annot	  	a data frame with a SNP and "id" columns
+#' @param annot_id	the id var name in annot
+#' @inheritParams params
+#' @return a data frame with an additional "id" column next to the SNP col
+#' @keywords internal
+annotate_plink_snp_output <- function(df, annot, annot_id,
+  annot_id_replacement = annot_id, df_snp_var = 'SNP') {
+  if (length(annot_id) != 1 || ! annot_id %in% names(annot))
+    stop('bad param annot_id')
+  SNP <- 'SNP'
+  cols <- c(SNP, annot_id)
+  if (any(! cols %in% names(annot)))
+    stop('mandatory cols not found in annot', paste0(cols, collapse = ', '))
+
+  idx <- match(df[[df_snp_var]], annot$SNP)
+
+  allcols <- names(df)
+  df[[annot_id_replacement]] <- annot[[annot_id]][idx]
+
+  # reorder cols
+  newcols <- append(allcols, annot_id_replacement, match(df_snp_var, allcols))
+  df <- df[, newcols, drop = FALSE]
+
+  df
+}
+
 
 #' reorder if needed a SNP-based plink output
 #'

@@ -1,5 +1,38 @@
 context('plink output')
 
+.annotate_plink_snp_output <- function() {
+  bo <- bed_open(plinker:::fetch_sample_bed())
+
+  annotate_plink_snp_output <- plinker:::annotate_plink_snp_output
+
+  bim <- bed_bim_df(bo)
+  ids <- bed_snp_IDs(bo)
+
+  # create a PLINK-like output
+  # duplicates, missing and some in reverse order
+  df <- bim[1:5, ]
+  df <- rbind(df, df[nrow(df):1, ])
+
+  df$A1 <- df$A2 <- df$MORGANS <- NULL
+  df$RESULT <- 1:nrow(df)
+
+  annot <- data.frame(
+    SNP = bim$SNP,
+    ID = paste0('ID_', bim$SNP),
+    TOTO = 1,
+    stringsAsFactors = FALSE)
+
+  expect_error(annotate_plink_snp_output(df, annot, 'ARF'), 'bad param annot_id')
+  expect_error(annotate_plink_snp_output(df, annot[, -1], 'ID'), 'mandatory cols')
+
+  df2 <- annotate_plink_snp_output(df, annot, 'ID')
+
+  expect_identical(df2[, -3], df)
+  # check ID mapping
+  expect_identical(paste0('ID_', df2$SNP), df2$ID)
+}
+test_that('annotate_plink_snp_output', .annotate_plink_snp_output())
+
 
 
 .reorder_plink_sample_output <- function() {

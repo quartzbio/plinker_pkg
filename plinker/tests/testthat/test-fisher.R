@@ -84,6 +84,21 @@ context('fisher test')
   expect_equal(df2$P[1:3], df1$P[1:3], tolerance = 1e-4)
   # recessive and dominant are reversed
   expect_equal(df2$P[4:5], df1$P[5:4], tolerance = 1e-4)
+
+  ### snp annot
+  bim <- bed_bim_df(bo)
+  annot <- data.frame(
+    SNP = bim$SNP,
+    ID = paste0('ID_', bim$SNP),
+    TOTO = 1,
+    stringsAsFactors = FALSE)
+
+  bo2 <- bed_set_snp_annot(bo, annot, 'ID')
+  res <- bed_plink_fisher(bo, quiet = TRUE)
+  res2 <- bed_plink_fisher(bo2, quiet = TRUE)
+
+  expect_identical(res2[, -3], res)
+  expect_identical(paste0('ID_', res2$SNP), res2$ID)
 }
 test_that('bed_plink_fisher', .bed_plink_fisher())
 

@@ -67,7 +67,8 @@ bed_get_sample_annot_id <- function(bo) {
 
 #' add custom snp annotations
 #'
-#' The annotations will be merged with the BIM data.
+#' The annotations will be reordered based on the current ordering.
+#'
 #'
 #' @inheritParams params
 #' @param df		the snp annotations, with a SNP column, and the same number of
