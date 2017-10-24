@@ -12,7 +12,7 @@ test:
     - make check
      
 coverage:
-  coverage: /Coverage\: (\d+.?\d*)/
+  coverage: '/Coverage: (\d+.?\d*)/'
   stage: test
   script:
     - echo "options(crayon.enabled=TRUE)" > .Rprofile
