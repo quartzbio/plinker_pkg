@@ -1,5 +1,5 @@
 [![build status](https://gitlab.quartzbio.com/code/plinker_pkg/badges/master/build.svg)](https://gitlab.quartzbio.com/code/plinker_pkg/commits/master)
-[![coverage report](https://gitlab.quartzbio.com/code/plinker_pkg/badges/master/coverage.svg)](https://gitlab.quartzbio.com/code/plinker_pkg/commits/master)
+[![coverage report](https://gitlab.quartzbio.com/code/plinker_pkg/badges/master/coverage.svg?job=coverage)](https://gitlab.quartzbio.com/code/plinker_pkg/commits/master)
 
 # Description
 
