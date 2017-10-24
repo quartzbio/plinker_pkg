@@ -8,7 +8,6 @@ before_script:
   - echo "options(crayon.enabled=TRUE)" > .Rprofile
 
 coverage:
-  coverage: '/Coverage: (\d+.?\d*)/'
   script:
     #- make check
     # N.B: colors fool the coverage regexp
