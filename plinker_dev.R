@@ -11,6 +11,7 @@ test('plinker', 'bedmatrix')
 test('plinker', 'bim')
 test('plinker', 'convert')
 test('plinker', 'covars')
+test('plinker', 'dist')
 test('plinker', 'fam')
 test('plinker', 'filters')
 test('plinker', 'fisher')
@@ -24,6 +25,10 @@ test('plinker', 'sample_data')
 test('plinker', 'stats')
 test('plinker', 'subset')
 test('plinker', 'utils')
+
+test_pkg('plinker', 'bed$')
+test_pkg('plinker', 'bed_plink$')
+test_pkg('plinker', 'dist')
 
 help2 <- function(..., help_type = 'html') {
   doc <- utils::help(..., help_type = help_type)
