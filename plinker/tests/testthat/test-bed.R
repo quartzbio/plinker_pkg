@@ -139,6 +139,7 @@ test_that('infer_nb_snps', .infer_nb_snps())
 
   ids <- bed_sample_IDs(bo)
   expect_identical(ids, paste0(fam_df$FID, '_', fam_df$IID))
+  expect_identical(bed_sample_IDs(bo, custom = TRUE), ids)
 
   ids <- bed_sample_IDs(bo, ignore_fid = TRUE)
   expect_identical(ids, fam_df$IID)
@@ -149,6 +150,18 @@ test_that('infer_nb_snps', .infer_nb_snps())
 
   ids <- bed_sample_IDs(bo2, ignore_fid = FALSE)
   expect_identical(ids, paste0(fam_df$FID, '_', fam_df$IID)[5:20])
+
+
+  ids <- bed_sample_IDs(bo)
+
+  annot <- data.frame(
+    MERGE_ID = rev(ids),
+    SUBJID = paste0('ID_', rev(ids)),
+    stringsAsFactors = FALSE)
+  bo2 <- bed_set_sample_annot(bo, annot, 'SUBJID')
+
+  ids2 <- bed_sample_IDs(bo2, custom = TRUE)
+  expect_identical(ids2, paste0('ID_', ids))
 }
 test_that('bed_sample_IDs', .bed_sample_IDs())
 

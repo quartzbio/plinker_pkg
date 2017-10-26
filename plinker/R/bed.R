@@ -223,11 +223,20 @@ bed_allele_higher <- function(bo, subset = TRUE) {
 #'
 #' @inheritParams params
 #' @inheritParams compute_sample_IDs
+#' @param custom	if TRUE, and a custom sample annotation is set, return
+#' 	it instead of the FAM ids. N.B: in that case, the subset param is ignored.
 #' @return the ids
 #' @family accessors
 #' @export
-bed_sample_IDs <- function(bo, subset = TRUE, ignore_fid = bed_ignore_fid(bo)) {
-  compute_sample_IDs(bed_fam_df(bo, subset = subset), ignore_fid)
+bed_sample_IDs <- function(bo, subset = TRUE,
+  ignore_fid = bed_ignore_fid(bo),
+  custom = FALSE)
+{
+  if (custom && !is.null(id <- bed_get_sample_annot_id(bo))) {
+    bed_get_sample_annot(bo, id)
+  } else {
+    compute_sample_IDs(bed_fam_df(bo, subset = subset), ignore_fid)
+  }
 }
 
 
