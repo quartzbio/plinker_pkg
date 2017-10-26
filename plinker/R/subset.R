@@ -65,6 +65,10 @@ bed_subset_snps_by_idx <- function(bo, snp_idx) {
     bo$snp_idx <- bo$snp_idx[snp_idx]
   }
 
+  # update snp annot if any
+  if (!is.null(bo$snp_annot))
+    bo$snp_annot <- bo$snp_annot[snp_idx, , drop = FALSE]
+
   bo
 }
 
@@ -133,6 +137,10 @@ bed_subset_samples_by_idx <- function(bo, sample_idx) {
   } else {
     bo$sample_idx <- bo$sample_idx[sample_idx]
   }
+
+  # update sample annot if any
+  if (!is.null(bo$sample_annot))
+    bo$sample_annot <- bo$sample_annot[sample_idx, , drop = FALSE]
 
   bo
 }
