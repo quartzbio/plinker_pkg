@@ -41,6 +41,17 @@ context('annotations')
   expect_null(bed_get_snp_annot_id(bo3))
 
   expect_identical(bed_get_snp_annot(bo3), bed_get_snp_annot(bo2))
+
+
+  ### subsetting
+  bo2 <- bed_set_snp_annot(bo, annot, 'ID')
+  a2 <- bed_get_snp_annot(bo2)
+  bo3 <- bed_subset(bo2, snp_idx = 10:5)
+  a3 <- bed_get_snp_annot(bo3)
+
+  expect_identical(a3, a2[10:5, ])
+  expect_identical(bed_snp_IDs(bo3, custom = TRUE),
+    bed_snp_IDs(bo2, custom = TRUE)[10:5])
 }
 test_that('bed_set_snp_annot', .bed_set_snp_annot())
 
@@ -79,7 +90,6 @@ test_that('bed_set_snp_annot', .bed_set_snp_annot())
   expect_identical(annot3[, 1:6], fam)
 
 
-
   ##### with secondary id -- -id=
   expect_error(bed_set_sample_annot(bo, annot, id = 'NOT'), 'bad column name')
   annot2 <- annot
@@ -94,6 +104,17 @@ test_that('bed_set_snp_annot', .bed_set_snp_annot())
   expect_null(bed_get_sample_annot_id(bo3))
 
   expect_identical(bed_get_sample_annot(bo3), bed_get_sample_annot(bo2))
+
+  ### subsetting
+  bo2 <- bed_set_sample_annot(bo, annot, id = 'SUBJID')
+  a2 <- bed_get_sample_annot(bo2)
+  bo3 <- bed_subset(bo2, sample_idx = 10:5)
+  a3 <- bed_get_sample_annot(bo3)
+
+  expect_identical(a3, a2[10:5, , drop = FALSE])
+  expect_identical(bed_sample_IDs(bo3, custom = TRUE),
+    bed_sample_IDs(bo2, custom = TRUE)[10:5])
+
 }
 test_that('bed_set_get_sample_annot', .bed_set_get_sample_annot())
 
