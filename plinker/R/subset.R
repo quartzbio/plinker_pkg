@@ -1,30 +1,36 @@
 #' subset  a plink dataset
 #'
 #' @inheritParams params
+#' @param  invert 	whether to invert the selection. N.B: in this case
+#' 		you must not subset both on SNPs and on samples.
 #' @return the subsetted bed dataset object
 #' @family subset
 #' @export
 bed_subset <- function(bo,
-  snp_IDs = NULL, snp_idx = NULL, sample_IDs = NULL, sample_idx = NULL)
+  snp_IDs = NULL, snp_idx = NULL, sample_IDs = NULL, sample_idx = NULL,
+  invert = FALSE)
 {
-  if (!is.null(snp_IDs) && !is.null(snp_idx))
+  snp <- is.null(snp_IDs) + is.null(snp_idx)
+  samp <- is.null(sample_IDs) + is.null(sample_idx)
+  if (snp == 0)
     stop('incompatible parameters snp_IDs and snp_idx')
-
-  if (!is.null(sample_IDs) && !is.null(sample_idx))
+  if (samp == 0)
     stop('incompatible parameters sample_IDs and sample_idx')
+  if (invert && samp < 2 && snp < 2)
+    stop('can not use both SNP and sample subsetting with invert=TRUE')
 
   bo2 <- if (!is.null(snp_IDs)) {
-          bed_subset_snps_by_IDs(bo, snp_IDs)
+          bed_subset_snps_by_IDs(bo, snp_IDs, invert = invert)
       } else if (!is.null(snp_idx)) {
-          bed_subset_snps_by_idx(bo, snp_idx)
+          bed_subset_snps_by_idx(bo, snp_idx, invert = invert)
       } else { NULL }
 
   if (!is.null(bo2)) bo <- bo2
 
   bo2 <- if (!is.null(sample_IDs)) {
-      bed_subset_samples_by_IDs(bo, sample_IDs)
+      bed_subset_samples_by_IDs(bo, sample_IDs, invert = invert)
       } else if (!is.null(sample_idx)) {
-      bed_subset_samples_by_idx(bo, sample_idx)
+      bed_subset_samples_by_idx(bo, sample_idx, invert = invert)
       } else { NULL }
 
   if (!is.null(bo2)) bo <- bo2
@@ -37,10 +43,11 @@ bed_subset <- function(bo,
 #' N.B: the order of SNPs will not be preserved.
 #'
 #' @inheritParams params
+#' @param  invert 	whether to invert the selection.
 #' @return the subsetted bed dataset object
 #' @family subset
 #' @export
-bed_subset_snps_by_idx <- function(bo, snp_idx) {
+bed_subset_snps_by_idx <- function(bo, snp_idx, invert = FALSE) {
   if (length(snp_idx) == 0) stop('empty snp_idx')
 
   if (anyDuplicated(snp_idx) > 0)
@@ -57,10 +64,13 @@ bed_subset_snps_by_idx <- function(bo, snp_idx) {
   if (rg[1] < 1 || rg[2] > bed_nb_snps(bo))
     stop('bad snp_idx range')
 
+  if (invert)
+    snp_idx <- setdiff(1:bed_nb_snps(bo), snp_idx)
+
   # apply the subset
   if (is.null(bo$snp_idx)) {
     # no subset yet
-    bo$snp_idx <- snp_idx
+      bo$snp_idx <- snp_idx
   } else {
     bo$snp_idx <- bo$snp_idx[snp_idx]
   }
@@ -75,10 +85,11 @@ bed_subset_snps_by_idx <- function(bo, snp_idx) {
 #' select a subset of SNPs in a plink dataset
 #'
 #' @inheritParams params
+#' @inheritParams bed_subset_snps_by_idx
 #' @return the subsetted bed dataset object
 #' @family subset
 #' @export
-bed_subset_snps_by_IDs <- function(bo, snp_IDs) {
+bed_subset_snps_by_IDs <- function(bo, snp_IDs, invert = FALSE) {
   bim_df <- bed_bim_df(bo, subset = TRUE)
 
   idx <- match(snp_IDs, bim_df$SNP)
@@ -88,7 +99,7 @@ bed_subset_snps_by_IDs <- function(bo, snp_IDs) {
     stop(sprintf('Error, bad snp_IDs: "%s"', paste0(bad_ids, collapse = ',')))
   }
 
-  bed_subset_snps_by_idx(bo, idx)
+  bed_subset_snps_by_idx(bo, idx, invert = invert)
 }
 
 
@@ -107,10 +118,11 @@ bed_reset_subset_snps_by_idx <- function(bo) {
 #' select a subsequence of samples in a plink dataset
 #'
 #' @inheritParams params
+#' @inheritParams bed_subset_snps_by_idx
 #' @return the subsetted bed dataset object
 #' @family subset
 #' @export
-bed_subset_samples_by_idx <- function(bo, sample_idx) {
+bed_subset_samples_by_idx <- function(bo, sample_idx, invert = FALSE) {
   if (length(sample_idx) == 0) stop('empty sample_idx')
 
   # check
@@ -129,6 +141,9 @@ bed_subset_samples_by_idx <- function(bo, sample_idx) {
   rg <- range(sample_idx)
   if (rg[1] < 1 || rg[2] > bed_nb_samples(bo))
     stop('bad sample_idx range')
+
+  if (invert)
+    sample_idx <- setdiff(1:bed_nb_samples(bo), sample_idx)
 
   # apply the subset
   if (is.null(bo$sample_idx)) {
@@ -149,12 +164,13 @@ bed_subset_samples_by_idx <- function(bo, sample_idx) {
 #' select a subset of samples in a plink dataset
 #'
 #' @inheritParams params
+#' @inheritParams bed_subset_snps_by_idx
 #' @return the subsetted bed dataset object
 #' @family subset
 #' @export
-bed_subset_samples_by_IDs <- function(bo, sample_IDs) {
+bed_subset_samples_by_IDs <- function(bo, sample_IDs, invert = FALSE) {
   idx <- bed_sample_IDs_to_idx(bo, sample_IDs)
-  bed_subset_samples_by_idx(bo, idx)
+  bed_subset_samples_by_idx(bo, idx, invert = invert)
 }
 
 
