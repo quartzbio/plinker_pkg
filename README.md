@@ -21,8 +21,9 @@ order of operations.
 # Features
   - _plinker_bed_ object:
     * instantaneous loading, .bim file only loaded once if needed
-    * is a view of the actual dataset, than can be recursively subsetted
-    * a print() method displays relevant information: cardinality, views, annotations...
+    * is a **view** of the actual dataset, than can be recursively subsetted
+    * a **print()** method displays relevant information: cardinality, views, annotations...
+    * an **as.data.frame()** method (for small datasets or subsets) in long format
     
   - subsetting
     * The most powerful feature is to be able to only use subsets of the original dataset without creating new files.
@@ -44,12 +45,19 @@ order of operations.
   - sample IDs:
     * FAM-like annotations are not always well suited: the sample IDs are split between family ID (FID) and 
       internal ID (IID). Quite often, a dummy value is assigned to FID (e.g. "0").
+      Plinker enables to use a single sample ID, which is either FID_IID, or just IID depending on the "ignore_fid" parameter
+      , which is automatically inferred by default
+    * you may also use a custom ID (cf annotations)
      
-    
+  - automatic management of missing value (NA): plinker will encode with a value not present in the dataset
 
   - pure-R implementations: for most algorithms, a pure R implementation with same input/output is provided, that allows:
     * to understand what PLINK actually computes
     * to easily tweak it if you need something slighlty different
     * to validate both implementations
      
+  - management of covariates:
+    * easy integration (checked merge)
+    * automatic creation of dummy variables for categorical variables (e.g. for linear models)
+
   - fully tested (coverage ~ 100%)
