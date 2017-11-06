@@ -1,7 +1,7 @@
 Package: plinker
 Title: a R interface for Plink BED files
 Version: 0.1
-Author: QB <all@quartzbio.com>
+Authors@R:  person("Karl", "Forner", role = c("aut", "cre"), email = "karl.forner@quartz.bio")
 Maintainer: <all@quartzbio.com>
 Description: a R interface for Plink BED files.
 Suggests:
