@@ -18,3 +18,22 @@ check:
   script:
     - make check
     
+
+pages:
+  stage: deploy
+  cache: 
+    paths:
+      - lib/
+  script:
+    # important: generate the roxygen doc prior to run pkgdown
+    - make roxygenise_pkg
+    # install pkgdown in a cached location because it is slow !
+    - test -e lib || mkdir lib
+    - export R_LIBS=$(pwd)/lib
+    # test if pkgdown is installed in lib, otherwise install it
+    - Rscript -e 'if (!"pkgdown"  %in% installed.packages()) devtools::install_github("hadley/pkgdown", lib = lib)'
+    - cd plinker
+    - Rscript -e 'pkgdown::build_site(path = "../public")'
+  artifacts:     
+    paths:       
+      - public/
