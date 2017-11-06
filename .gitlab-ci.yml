@@ -19,7 +19,6 @@ check:
     - make check
     
 
-
 pages:
   stage: deploy
   cache: 
@@ -27,7 +26,7 @@ pages:
       - lib/
   script:
     # important: generate the roxygen doc prior to run pkgdown
-    - make roxygenise_pkg
+    - make rox
     # install pkgdown in a cached location because it is slow !
     - test -e lib || mkdir lib
     - export R_LIBS=$(pwd)/lib
