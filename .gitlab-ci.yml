@@ -16,7 +16,5 @@ coverage:
 
 check:
   script:
-    #- make check
-    # N.B: colors fool the coverage regexp
-    - echo "options(crayon.enabled=FALSE)" > .Rprofile
+    - make check
     
