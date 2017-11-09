@@ -9,7 +9,7 @@ before_install:
   - wget https://www.cog-genomics.org/static/bin/plink171103/plink_linux_x86_64.zip
   - unzip plink_linux_x86_64.zip
   - export PATH=$PWD:$PATH
-  - cd ..
+  - cd plinker
  
 before_script:
  - make -C ../ rox
