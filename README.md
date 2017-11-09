@@ -6,8 +6,6 @@ plinker
 
 plinker is a R package to interface PLINK over PLINK BED files
 
-Package documentation: https://code.pages.quartzbio.com/plinker_pkg/index.html
-
 ## Quick Install
 
 ### install PLINK
