@@ -1,7 +1,8 @@
+plinker
+========
 
-old gitlab stuff
-[![build status](https://gitlab.quartzbio.com/code/plinker_pkg/badges/master/build.svg)](https://gitlab.quartzbio.com/code/plinker_pkg/commits/master)
-[![coverage report](https://gitlab.quartzbio.com/code/plinker_pkg/badges/master/coverage.svg)](https://gitlab.quartzbio.com/code/plinker_pkg/commits/master)
+[![Build Status](https://travis-ci.org/quartzbio/plinker_pkg.svg?branch=master)](https://travis-ci.org/quartzbio/plinker_pkg)
+[![codecov](https://codecov.io/github/quartzbio/plinker_pkg/coverage.svg)](https://codecov.io/github/quartzbio/plinker_pkg)
 
 plinker is a R package to interface PLINK over PLINK BED files
 
@@ -64,3 +65,8 @@ order of operations.
     * automatic creation of dummy variables for categorical variables (e.g. for linear models)
 
   - fully tested (coverage ~ 100%)
+  
+  
+old gitlab stuff
+[![build status](https://gitlab.quartzbio.com/code/plinker_pkg/badges/master/build.svg)](https://gitlab.quartzbio.com/code/plinker_pkg/commits/master)
+[![coverage report](https://gitlab.quartzbio.com/code/plinker_pkg/badges/master/coverage.svg)](https://gitlab.quartzbio.com/code/plinker_pkg/commits/master)
