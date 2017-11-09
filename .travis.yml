@@ -2,8 +2,7 @@ language: r
 before_install: 
   - wget https://www.cog-genomics.org/static/bin/plink171103/plink_linux_x86_64.zip
   - unzip plink_linux_x86_64.zip
-  - cp plink /usr/local/bin/
-  - cd plinker
+  - export PATH=$PWD:$PATH
   - make rox
 
 cache: packages
