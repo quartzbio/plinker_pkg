@@ -1,0 +1,22 @@
+# latest qbrocker image
+image: $CI_REGISTRY/registry/qb:latest
+
+variables:
+  ENTRYPOINT_DEBUG: "0"
+
+before_script:
+  - echo "options(crayon.enabled=TRUE)" > .Rprofile
+
+coverage:
+  script:
+    #- make check
+    # N.B: colors fool the coverage regexp
+    - echo "options(crayon.enabled=FALSE)" > .Rprofile
+    - make coverage
+
+check:
+  script:
+    #- make check
+    # N.B: colors fool the coverage regexp
+    - echo "options(crayon.enabled=FALSE)" > .Rprofile
+    

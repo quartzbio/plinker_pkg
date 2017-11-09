@@ -1,0 +1,36 @@
+library(devtools)
+
+check_man('plinker')
+
+test('plinker')
+test('plinker', 'annotations')
+test('plinker', 'bed$')
+test('plinker', 'bed_plink$')
+test('plinker', 'bed_plink_lm')
+test('plinker', 'bedmatrix')
+test('plinker', 'bim')
+test('plinker', 'convert')
+test('plinker', 'covars')
+test('plinker', 'dist')
+test('plinker', 'fam')
+test('plinker', 'filters')
+test('plinker', 'fisher')
+test('plinker', 'genotype')
+test('plinker', 'missing')
+test('plinker', 'phenotype')
+test('plinker', '^plink$')
+test('plinker', 'plink_lm')
+test('plinker', 'plink_output')
+test('plinker', 'sample_data')
+test('plinker', 'stats')
+test('plinker', 'subset')
+test('plinker', 'utils')
+
+test_pkg('plinker', 'bed$')
+test_pkg('plinker', 'bed_plink$')
+test_pkg('plinker', 'dist')
+
+help2 <- function(..., help_type = 'html') {
+  doc <- utils::help(..., help_type = help_type)
+  utils:::print.help_files_with_topic(doc)
+}
