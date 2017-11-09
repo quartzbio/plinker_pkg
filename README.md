@@ -10,10 +10,20 @@ Package documentation: https://code.pages.quartzbio.com/plinker_pkg/index.html
 
 ## Quick Install
 
-To install the package:
+### install PLINK
+The easiest way is to use the precompiled binaries available here: https://www.cog-genomics.org/plink/1.9/
 
-* make install: install the package in the default R library
-* sudo make install: if you need root access
+### install plinker
+
+To install the package:
+#### using devtools
+```
+devtools::install_github('quartzbio/plinker_pkg', subdir = 'plinker')
+```
+#### using the source
+clone/download this repository, then type:
+* `make install`: install the package in the default R library
+* `sudo make install`: if you need root access
 
 
 # Philosophy
