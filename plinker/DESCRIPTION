@@ -5,8 +5,9 @@ Authors@R:  person("Karl", "Forner", role = c("aut", "cre"), email = "karl.forne
 Maintainer: <all@quartzbio.com>
 Description: a R interface for Plink BED files.
 Suggests:
-	BEDMatrix,
+    BEDMatrix,
     data.table,
+    devtools,
     readr,
     roxygen2,
     stats,
