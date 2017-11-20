@@ -44,5 +44,6 @@ test_that('ibs_state', .ibs_state())
     (2*9 - (2 + 2 + 1 + 1 + 2)) / (2*9)
   )
 
+
 }
 test_that('ibs', .ibs())

@@ -447,7 +447,8 @@ test_that('bed_plink_freqx', .bed_plink_freqx())
   expect_true(df1$A2[2] != df2$A2[2])
 
   ### BUG!!!!!!: PLINK --freq counts is buggy
-  expect_true(df1$C2[2] == df2$C2[2])
+  # regression test for bug now fixed in PLINK
+  # expect_true(df1$C2[2] == df2$C2[2])
 
   ### snp annot
   bim <- bed_bim_df(bo)
