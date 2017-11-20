@@ -1,6 +1,5 @@
 plinker
 ========
-
 [![Build Status](https://travis-ci.org/quartzbio/plinker_pkg.svg?branch=master)](https://travis-ci.org/quartzbio/plinker_pkg)
 [![codecov](https://codecov.io/github/quartzbio/plinker_pkg/coverage.svg)](https://codecov.io/github/quartzbio/plinker_pkg)
 
@@ -30,6 +29,7 @@ clone/download this repository, then type:
 The objective of this package is to use the powerful and fast algorithms implemented
 in PLINK without caring about input and ouput file formats, and without relying on PLINK
 order of operations.
+
 
 # Features
   - _plinker_bed_ object:
@@ -80,4 +80,3 @@ order of operations.
 old gitlab stuff
 [![build status](https://gitlab.quartzbio.com/code/plinker_pkg/badges/master/build.svg)](https://gitlab.quartzbio.com/code/plinker_pkg/commits/master)
 [![coverage report](https://gitlab.quartzbio.com/code/plinker_pkg/badges/master/coverage.svg)](https://gitlab.quartzbio.com/code/plinker_pkg/commits/master)
-
