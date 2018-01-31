@@ -451,7 +451,7 @@ bed_plink_missing <- function(bo, ...)
 }
 
 postprocess_sample_output <- function(bo, out) {
-  out <- reorder_plink_sample_output(out, bed_sample_IDs(bo))
+  out <- reorder_plink_sample_output(out, bed_sample_IDs(bo), ignore_fid = bed_ignore_fid(bo))
   if (!is.null(id <- bed_get_sample_annot_id(bo))) {
     out <- annotate_plink_sample_output(out,
       bed_get_sample_annot(bo, fam = TRUE), id)
