@@ -47,6 +47,13 @@ read_plink_freq_counts <- function(path) {
 }
 
 
+read_plink_freq <- function(path) {
+  read_plink_output(path,
+    colClasses = c('character','character', 'character', 'character',
+      'numeric', 'integer'))
+
+}
+
 
 #' reorder if needed a sample-based plink output
 #'

@@ -468,6 +468,77 @@ test_that('bed_plink_freqx', .bed_plink_freqx())
 test_that('bed_plink_freq_count', .bed_plink_freq_count())
 
 
+.bed_plink_freq <- function() {
+  bo <- bed_open(plinker:::fetch_sample_bed())
+
+  bim_df <- bed_bim_df(bo)
+
+  ### no subset
+  df <- bed_plink_freq(bo, quiet = TRUE)
+
+  expect_equal(max(df$NCHROBS)/ 2, bed_nb_samples(bo))
+
+  expect_identical(df$SNP, bim_df$SNP)
+  expect_identical(df$A1, bim_df$A1)
+  expect_identical(df$A2, bim_df$A2)
+
+  # sample filtering
+  df2 <- bed_plink_freq(bo, allow_no_sex = FALSE, quiet = TRUE)
+  # only ignore phenotype for no sex, does not impact the freqs
+  expect_identical(df2, df)
+
+  df2 <- bed_plink_freq(bo, nonfounders = FALSE, quiet = TRUE)
+  nb <- max(df2$NCHROBS) / 2
+  nb_nonfounders <- bed_nb_samples(bo) - nb
+  expect_equal(nb_nonfounders, 3)
+
+  ## !! 3 non founders, although only 2 actual ones since on hasa parent not
+  ## in the fam file
+
+  #### subset by snps
+  bo2 <- bed_subset_snps_by_idx(bo, 6:10)
+  df2 <- bed_plink_freq(bo2, quiet = TRUE)
+  expect_equivalent(df2, df[6:10, ])
+
+  ### subset by samples
+  bo2 <- bed_subset_samples_by_idx(bo, 21:60)
+  df2 <- bed_plink_freq(bo2, quiet = TRUE)
+  nb <- max(df2$NCHROBS) / 2
+  expect_equal(nb, 40)
+
+  ### ordering
+  bo2 <- bed_subset(bo, snp_idx = 10:2)
+  df2 <- bed_plink_freq(bo2, quiet = TRUE)
+  expect_identical(df2$SNP, bed_snp_IDs(bo2))
+
+  ### allele order
+  df1 <- bed_plink_freq(bo, quiet = TRUE)
+  df2 <- bed_plink_freq(bo, quiet = TRUE, lexicographic_allele_order = TRUE)
+
+  expect_true(df1$A2[2] != df2$A2[2])
+
+  ### BUG!!!!!!: PLINK --freq counts is buggy
+  # regression test for bug now fixed in PLINK
+  # expect_true(df1$C2[2] == df2$C2[2])
+
+  ### snp annot
+  bim <- bed_bim_df(bo)
+  annot <- data.frame(
+    SNP = bim$SNP,
+    ID = paste0('ID_', bim$SNP),
+    TOTO = 1,
+    stringsAsFactors = FALSE)
+
+  bo2 <- bed_set_snp_annot(bo, annot, 'ID')
+  res <- bed_plink_freq(bo, quiet = TRUE)
+  res2 <- bed_plink_freq(bo2, quiet = TRUE)
+
+  expect_identical(res2[, -3], res)
+  expect_identical(paste0('ID_', res2$SNP), res2$ID)
+}
+test_that('bed_plink_freq', .bed_plink_freq())
+
+
 
 .bed_plink_cmd <- function() {
   plink_cmd <- plinker:::plink_cmd

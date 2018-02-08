@@ -164,6 +164,27 @@ bed_plink_freq_count <- function(bo, ...)
   postprocess_snp_output(bo, df)
 }
 
+#' compute minor allele frequencies using plink --freq
+#'
+#' N.B: plink --freq does NOT reorder the alleles.
+#'
+#' @param ...		passed to \code{\link{bed_plink_cmd}}
+#' @inheritParams bed_plink_cmd
+#' @return a data frame, cf \url{http://www.cog-genomics.org/plink/1.9/formats#frq_count}
+#'
+#' @seealso bed_plink_cmd
+#' @export
+bed_plink_freq <- function(bo, ...)
+{
+  setup_temp_dir()
+
+  args <- '--freq'
+  bed_plink_cmd(bo, args, ...)
+  df <- read_plink_freq('plink.frq')
+
+  postprocess_snp_output(bo, df)
+}
+
 #' compute LD using plink --r2 dprime
 #'
 #' N.B: use min_r2 to limit output !!!!
