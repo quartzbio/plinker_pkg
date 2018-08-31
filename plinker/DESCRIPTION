@@ -13,7 +13,7 @@ Suggests:
     stats,
     utils,
     testthat
-License: GPL-3
+License: Proprietary, ownership of Quartz Bio SA.
 Copyright: Quartz Bio SA, Bat. F2/F3, Avenue de Secheron 15, CH-1202 Geneva,
     Switzerland.
 Roxygen: list(markdown = TRUE)
